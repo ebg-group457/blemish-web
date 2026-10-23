@@ -35,3 +35,21 @@ footer{background:var(--g);color:var(--s);text-align:center;padding:1.5rem}
 @media(max-width:900px){.grid,.vals{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
 @media(max-width:700px){.burger{display:block}nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--g);flex-direction:column;padding:1rem 5vw}
 #nav-t:checked~nav{display:flex}nav a{margin:.6rem 0}.sec{padding:3.5rem 5vw}h2{font-size:1.8rem}.collage img{height:150px}.grid{gap:.8rem}.card-b{padding:.6rem}.card-b h4{font-size:.95rem}}
+
+.logo{flex-direction:row;align-items:center;gap:.6rem}.logo span{display:flex;flex-direction:column}.logo-img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--h)}
+.btn.ghost{background:transparent;color:var(--c);border:2px solid var(--h)}
+p,li,blockquote{text-align:justify}
+.xp{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}.xcard{background:var(--c);border:1px solid var(--s);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.xcard img{width:100%;aspect-ratio:4/3;object-fit:cover}.xb{padding:1.2rem}.xb h3{color:var(--g);margin:0 0 .5rem;font-size:1.3rem}
+.price{list-style:none;padding:0;margin:.8rem 0 .2rem}.price li{display:flex;justify-content:space-between;border-bottom:1px dashed var(--s);padding:.35rem 0}.price b{color:var(--b)}
+.info{margin:2rem 0;background:var(--g);color:var(--c);border-radius:12px;padding:1.5rem 2rem}.info b{color:var(--h)}.info .btn{margin-top:.4rem}
+.gal-t{color:var(--g);font-size:1.6rem;margin:2.5rem 0 1rem}.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem}
+.gal figure{margin:0;position:relative;border-radius:10px;overflow:hidden}.gal img{width:100%;aspect-ratio:1/1;object-fit:cover}
+.gal figcaption{position:absolute;left:0;right:0;bottom:0;padding:.4rem .7rem;background:linear-gradient(transparent,rgba(1,48,37,.85));color:var(--c);font-size:.85rem}
+.rating{font-size:1.15rem}.stars{color:var(--h);letter-spacing:.1em}
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:1.5rem}
+.quotes blockquote{margin:0;background:#fff;border:1px solid var(--s);border-left:5px solid var(--h);border-radius:12px;padding:1.2rem 1.4rem}
+.quotes p{line-height:1.6;margin:.5rem 0}.quotes cite{font-size:.85rem;color:var(--b);font-style:normal;font-weight:700}
+.green .stars{color:var(--h)}
+@media(max-width:900px){.xp,.quotes{grid-template-columns:1fr}.gal{grid-template-columns:repeat(2,1fr)}}
+p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
