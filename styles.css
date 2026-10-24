@@ -56,3 +56,4 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .vids{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem}.vids figure{margin:0}.vids video{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px;background:#000;display:block}.vids figcaption{text-align:center;color:var(--g);margin-top:.5rem;font-weight:600}
 @media(max-width:1000px){.vids{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.vids{grid-template-columns:1fr;max-width:380px;margin:0 auto}}
 .feat{margin:0 auto 2rem;max-width:560px}.feat img{width:100%;border-radius:12px;display:block}
+.more{text-align:center}footer a{color:var(--h);text-decoration:none}footer a:hover{text-decoration:underline}
