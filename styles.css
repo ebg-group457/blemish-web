@@ -74,3 +74,10 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .tina picture{flex:0 0 min(52%,280px);display:block}.tina img{width:100%}
 .tina-sign{white-space:nowrap;margin-top:22%}
 @media(max-width:760px){.tina{justify-content:flex-start;padding-left:4vw}.tina picture{flex-basis:46%}.tina-sign{font-size:1.2rem;padding:.55rem .9rem;margin-left:.9rem}}
+.counter-k{display:block;color:var(--h);letter-spacing:.14em;text-transform:uppercase;font-weight:700;font-size:.8rem;margin-bottom:.2rem}
+.mapbox{position:relative;margin-top:1.2rem;border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(1,48,37,.18);border:1px solid var(--s)}
+.mapbox iframe{display:block;width:100%;height:260px;border:0;pointer-events:none}
+.map-link{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:1rem;text-decoration:none}
+.map-link span{background:var(--h);color:var(--g);font-weight:700;padding:.7rem 1.4rem;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.map-link:hover span,.map-link:focus-visible span{background:#fff}
+@media(min-width:761px){.tina picture{flex-basis:min(44%,230px)}.tina-sign{margin-left:1rem}}
