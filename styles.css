@@ -81,3 +81,9 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .map-link span{background:var(--h);color:var(--g);font-weight:700;padding:.7rem 1.4rem;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
 .map-link:hover span,.map-link:focus-visible span{background:#fff}
 @media(min-width:761px){.tina picture{flex-basis:min(44%,230px)}.tina-sign{margin-left:1rem}}
+.tina-fig{margin:0;flex:0 0 min(52%,280px);text-align:center}
+.tina-fig picture{display:block}
+.tina-fig img{display:block;width:100%;height:auto}
+.tina-fig figcaption{margin-top:.2rem;color:var(--g);font-family:"Yeseva One",serif;font-size:1.25rem;line-height:1.2;text-align:center}
+@media(min-width:761px){.tina-fig{flex-basis:min(44%,230px)}}
+@media(max-width:760px){.tina-fig{flex-basis:46%}.tina-fig figcaption{font-size:1.05rem}}
