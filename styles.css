@@ -61,11 +61,16 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 
 .contact-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:2.5rem;align-items:start}.contact-grid .contact{max-width:none}
 .reach img{width:100%;height:auto;border-radius:12px;box-shadow:0 8px 24px rgba(1,48,37,.18)}
-.counter{margin-top:1.2rem;background:var(--g);color:var(--c);border-radius:12px;padding:1.6rem 1.4rem;text-align:center}
-.counter-k{display:block;color:var(--h);letter-spacing:.14em;text-transform:uppercase;font-weight:700;font-size:.8rem}
+.counter{margin-top:1.2rem;background:var(--g);border-radius:12px;padding:1.4rem;text-align:center}
 .counter-n{display:block;font-family:"Yeseva One",serif;font-weight:400;color:var(--h);font-size:clamp(2.6rem,6vw,3.8rem);line-height:1.1;margin:.2rem 0}
-.counter-s{display:block;font-size:.95rem}
-.counter-l{list-style:none;margin:1rem 0 .8rem;padding:1rem 0 0;border-top:1px solid rgba(226,184,79,.35);display:flex;justify-content:center;gap:2rem;flex-wrap:wrap}
-.counter-l li{display:flex;flex-direction:column}.counter-l b{color:var(--h);font-size:1.15rem}.counter-l span{font-size:.8rem}
-.counter small{display:block;opacity:.8;font-size:.78rem}
 @media(max-width:760px){.contact-grid{grid-template-columns:1fr}}
+.cg-l{display:flex;flex-direction:column;gap:1.5rem}
+.tina{position:relative;display:flex;align-items:center;justify-content:flex-start;gap:0;padding:.5rem 0 0}
+.tina img{width:min(52%,260px);height:auto;filter:drop-shadow(0 10px 14px rgba(1,48,37,.22))}
+.tina-sign{position:relative;margin:0 0 0 1.4rem;align-self:flex-start;margin-top:32%;background:var(--g);color:var(--h);font-family:"Yeseva One",serif;font-size:clamp(1.5rem,3.4vw,2.2rem);line-height:1.1;padding:.7rem 1.3rem;border-radius:18px;box-shadow:0 6px 16px rgba(1,48,37,.22);text-align:center!important;border:2px solid var(--h)}
+.tina-sign:before{content:"";position:absolute;left:-15px;top:50%;margin-top:-10px;border:10px solid transparent;border-right:15px solid var(--h);border-left:0}
+.tina-sign:after{content:"";position:absolute;left:-11px;top:50%;margin-top:-8px;border:8px solid transparent;border-right:12px solid var(--g);border-left:0}
+@media(max-width:760px){.tina{justify-content:center}.tina img{width:min(50%,220px)}}
+.tina picture{flex:0 0 min(52%,280px);display:block}.tina img{width:100%}
+.tina-sign{white-space:nowrap;margin-top:22%}
+@media(max-width:760px){.tina{justify-content:flex-start;padding-left:4vw}.tina picture{flex-basis:46%}.tina-sign{font-size:1.2rem;padding:.55rem .9rem;margin-left:.9rem}}
