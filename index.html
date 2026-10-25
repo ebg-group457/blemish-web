@@ -4,7 +4,7 @@
 <!-- BORRADOR LOCAL: no publicado. Productos sin precio hasta aprobar fichas. -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Yeseva+One&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=6"></head><body>
+<link rel="stylesheet" href="styles.css?v=7"></head><body>
 <header class="hdr"><a href="#inicio" class="logo"><img src="img/logo.webp" alt="Logo Finca Blemish" class="logo-img"><span>Blemish<small>Finca</small></span></a>
 <input type="checkbox" id="nav-t" hidden><label for="nav-t" class="burger" aria-label="Menú">☰</label>
 <nav><a href="#nosotros">Nosotros</a><a href="#experiencias">Experiencias</a><a href="#productos">Productos</a><a href="#opiniones">Opiniones</a><a href="#contacto">Contacto</a></nav></header>
@@ -34,11 +34,15 @@
 <div class="val"><b>🍯</b><h3>Miel natural</h3><p>Miel cosechada en nuestra finca, sin aditivos.</p></div>
 <div class="val"><b>🌿</b><h3>Hecho en el campo</h3><p>Productos elaborados por manos colombianas.</p></div>
 <div class="val"><b>🤝</b><h3>Del productor a tu casa</h3><p>Compra directa, sin intermediarios.</p></div></div></div></section>
-<section id="contacto" class="sec"><div class="wrap"><h2>Contacto</h2><div class="contact">
+<section id="contacto" class="sec"><div class="wrap"><h2>Contacto</h2><div class="contact-grid"><div class="contact">
 <p><b>Correo:</b> <a href="mailto:farm.blemish@gmail.com">farm.blemish@gmail.com</a></p>
 <p><b>WhatsApp:</b> <a href="https://wa.me/573186506095">318 650 6095</a></p><p><b>Instagram:</b> <a href="https://instagram.com/fincablemish">@fincablemish</a></p><p><b>Facebook:</b> <a href="https://facebook.com/fincablemishcol">facebook.com/fincablemishcol</a></p><p><b>YouTube:</b> <a href="https://www.youtube.com/@fincablemish" target="_blank" rel="noopener">@fincablemish</a></p>
 <p><b>Ubicación:</b> Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca</p>
-<a class="btn wa" href="https://wa.me/573186506095">Escríbenos por WhatsApp</a></div></div></section>
+<a class="btn wa" href="https://wa.me/573186506095">Escríbenos por WhatsApp</a></div>
+<aside class="reach"><picture><source srcset="img/portada-finca.webp" type="image/webp"><img src="img/portada-finca.jpg" alt="Finca Blemish: apicultura y turismo en Jamundí" loading="lazy" width="1200" height="666"></picture>
+<div class="counter"><span class="counter-k">Visitas acumuladas en nuestras redes</span><b class="counter-n" id="visitas" data-n="275849">+275.000</b><span class="counter-s">reproducciones en Instagram, Facebook y YouTube</span>
+<ul class="counter-l"><li><b>+262.000</b><span>Instagram</span></li><li><b>+12.900</b><span>Facebook</span></li><li><b>+490</b><span>YouTube</span></li></ul>
+<small>Corte al 25 de octubre de 2026. Se actualiza cada mes.</small></div></aside></div></div></section>
 <footer>© 2026 Finca Blemish · fincablemish.com · <a href="https://instagram.com/fincablemish" target="_blank" rel="noopener">Instagram</a> · <a href="https://facebook.com/fincablemishcol" target="_blank" rel="noopener">Facebook</a> · <a href="https://www.youtube.com/@fincablemish" target="_blank" rel="noopener">YouTube</a></footer>
 <div id="lb" class="lb" hidden><button class="lb-x" aria-label="Cerrar">×</button><button class="lb-p">‹</button><figure><img alt=""><figcaption></figcaption></figure><button class="lb-n">›</button></div>
 <script>
@@ -48,4 +52,9 @@ document.querySelectorAll('[data-gallery]').forEach(a=>a.addEventListener('click
 lb.querySelector('.lb-x').onclick=()=>lb.hidden=true;lb.querySelector('.lb-p').onclick=()=>{k=(k-1+set.length)%set.length;show()};lb.querySelector('.lb-n').onclick=()=>{k=(k+1)%set.length;show()};
 lb.onclick=e=>{if(e.target===lb)lb.hidden=true};document.onkeydown=e=>{if(lb.hidden)return;if(e.key=='Escape')lb.hidden=true;if(e.key=='ArrowRight')lb.querySelector('.lb-n').click();if(e.key=='ArrowLeft')lb.querySelector('.lb-p').click()};
 document.querySelectorAll('nav a').forEach(a=>a.onclick=()=>document.getElementById('nav-t').checked=false);
-</script></body></html>
+</script><script>/* Contador de visitas: cada mes actualizar data-n, los textos y la fecha de corte */
+(function(){var e=document.getElementById('visitas');if(!e)return;var n=+e.dataset.n,fin=e.textContent,f=new Intl.NumberFormat('es-CO');
+function run(){var t0=null;function st(t){t0=t0||t;var p=Math.min((t-t0)/1800,1);e.textContent='+'+f.format(Math.round(n*(1-Math.pow(1-p,3))));p<1?requestAnimationFrame(st):e.textContent=fin}requestAnimationFrame(st)}
+if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
+var io=new IntersectionObserver(function(x){if(x[0].isIntersecting){run();io.disconnect()}},{threshold:.5});io.observe(e)})();</script>
+</body></html>

@@ -58,3 +58,14 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .feat{margin:0 auto 2rem;max-width:560px}.feat img{width:100%;border-radius:12px;display:block}
 .more{text-align:center}footer a{color:var(--h);text-decoration:none}footer a:hover{text-decoration:underline}
 .vids .yt{position:relative;width:100%;aspect-ratio:3/4;border-radius:12px;overflow:hidden;background:#000}.vids .yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+.contact-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:2.5rem;align-items:start}.contact-grid .contact{max-width:none}
+.reach img{width:100%;height:auto;border-radius:12px;box-shadow:0 8px 24px rgba(1,48,37,.18)}
+.counter{margin-top:1.2rem;background:var(--g);color:var(--c);border-radius:12px;padding:1.6rem 1.4rem;text-align:center}
+.counter-k{display:block;color:var(--h);letter-spacing:.14em;text-transform:uppercase;font-weight:700;font-size:.8rem}
+.counter-n{display:block;font-family:"Yeseva One",serif;font-weight:400;color:var(--h);font-size:clamp(2.6rem,6vw,3.8rem);line-height:1.1;margin:.2rem 0}
+.counter-s{display:block;font-size:.95rem}
+.counter-l{list-style:none;margin:1rem 0 .8rem;padding:1rem 0 0;border-top:1px solid rgba(226,184,79,.35);display:flex;justify-content:center;gap:2rem;flex-wrap:wrap}
+.counter-l li{display:flex;flex-direction:column}.counter-l b{color:var(--h);font-size:1.15rem}.counter-l span{font-size:.8rem}
+.counter small{display:block;opacity:.8;font-size:.78rem}
+@media(max-width:760px){.contact-grid{grid-template-columns:1fr}}
