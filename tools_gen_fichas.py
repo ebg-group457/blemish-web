@@ -1,0 +1,83 @@
+import re,html
+S=open('index.html').read()
+if 'card-link' in S:
+  import subprocess; S=subprocess.check_output(['git','show','main:index.html'],text=True)  # parte siempre del index original
+P=[("miel-en-botella","Miel en botella","p-miel-500g-ad","Mieles"),("miel-en-frasco","Miel en frasco","p-miel-650g-ad","Mieles"),("panal","Panal de miel","p-panal-ad","Mieles"),("pipimiel","Pipimiel (miel picante)","p-pipimiel-ad","Mieles"),("jabon-de-miel","Jabón de miel","jabon-ad","Jabones de miel"),("jabon-hexagonal","Jabón hexagonal","jabon-hexagonal-ad","Jabones de miel"),("vela-cera-de-abeja","Vela de cera de abeja",None,"Velas de cera de abeja"),("set-de-velas","Set de velas",None,"Velas de cera de abeja"),("polen","Polen","p-polen","Derivados"),("tintura-de-propoleo","Tintura de propóleo","p-tintura-propoleo","Derivados"),("fourvigor","Fourvigor","p-fourvigor","Derivados"),("dispensador-de-miel","Dispensador de miel","p-dispensador","Accesorios y kits"),("abeja-3d-en-madera","Abeja 3D en madera","p-abeja-3d","Accesorios y kits"),("kit-regalo","Kit regalo",None,"Accesorios y kits")]
+head=S.split('<header')[0].replace('styles.css','../styles.css')
+hdr=re.search(r'<header.*?</header>',S,re.S).group(0)
+hdr=hdr.replace('href="#','href="../index.html#').replace('src="img/','src="../img/')
+foot=re.search(r'<footer>.*?</footer>',S,re.S).group(0)
+WA="https://wa.me/573186506095?text="
+import urllib.parse as u
+FULL={"jabon-hexagonal":dict(pres="Barra hexagonal con forma de panal y abeja · 60 g",
+ desc="Jabón artesanal con forma hexagonal de panal y abeja, hecho con ingredientes 100% naturales y miel pura de nuestras colmenas en Jamundí, para un cuidado suave y profundo. La miel natural sella la humedad y deja la piel suave y flexible. Su limpieza delicada respeta el equilibrio natural de la piel, ideal para todo tipo de piel, incluso la más sensible. Disfruta de su aroma sutil y su textura reconfortante en cada ducha.",
+ car=["Origen: Finca Blemish, Jamundí, Valle del Cauca (Colombia)","Hecho con ingredientes 100% naturales y miel pura","Forma hexagonal de panal con abeja","Peso: 60 g","Ingredientes (INCI): por confirmar"],
+ ben=["Hidratación profunda: la miel natural sella la humedad y deja la piel suave y flexible","Limpieza delicada: respeta el equilibrio natural de la piel, ideal para todo tipo de piel, incluso la más sensible","Experiencia sensorial: aroma sutil y textura reconfortante en cada ducha","Apoya lo artesanal y lo local"],
+ uso=["Humedece la piel y aplica el jabón con movimientos circulares suaves hasta formar espuma.","Masajea y enjuaga con abundante agua.","Después de cada uso, déjalo en un lugar seco para que dure más."],
+ precio="$15.500"),"jabon-de-miel":dict(pres="Barra redonda translúcida color ámbar con una abeja grabada en el centro · 50 g",
+ desc="Jabón artesanal hecho con miel de abejas 100% natural de nuestras colmenas en Jamundí. Ofrece una limpieza suave sin resecar, deja la piel suave y tiene el aroma y la dulzura de la miel. Libre de químicos agresivos, es para el uso diario en manos, rostro y cuerpo, en todo tipo de piel.",
+ car=["Origen: Finca Blemish, Jamundí, Valle del Cauca (Colombia)","Elaborado con miel de abejas 100% natural","Barra redonda translúcida color ámbar, con abeja grabada en el centro","Peso: 50 g","Libre de químicos agresivos","Ingredientes (INCI): por confirmar"],
+ ben=["Limpieza suave sin resecar","Deja la piel suave","Aroma y dulzura de la miel","Para uso diario en manos, rostro y cuerpo"],
+ uso=["Humedece la piel y aplica el jabón con movimientos circulares suaves hasta formar espuma.","Masajea y enjuaga con abundante agua.","Después de cada uso, déjalo en un lugar seco para que dure más."],
+ precio="$13.000"),"pipimiel":dict(pres="Frasco de vidrio clásico con etiqueta hexagonal PIPIMIEL · contenido neto 150 g",
+ desc="Nuestra miel picante: una fusión de miel de abejas de nuestras colmenas en Jamundí con pipilongo, una pimienta verde. Dulce y picante a la vez, para darle un toque diferente a tus comidas y sorprender a tus invitados.",
+ car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Ingredientes: miel de abejas y pipilongo (pimienta verde)","Sabor: dulce con un toque picante","Contenido neto: 150 g","Envase: frasco de vidrio clásico con etiqueta hexagonal PIPIMIEL"],
+ ben=["Una combinación original de dulce y picante","Hecha con miel de nuestra finca","Ideal para sorprender a tus invitados","Del campo directo a tu mesa: apoyas lo local"],
+ uso=["Úsala para glasear carnes y darle brillo y sabor a tus asados.","Prepara un aderezo innovador para tus ensaladas.","Sírvela en la mesa para que cada quien la pruebe a su gusto.","Guárdala bien tapada, en un lugar fresco y seco, lejos de la luz directa del sol."],
+ precio="$15.000"),"panal":dict(pres="Recipiente transparente tipo estuche, sello «Con Sabor al Valle» y etiqueta Blemish · contenido neto 220 g",
+ desc="Miel tal como la hacen las abejas: sellada de forma natural en sus celdas de cera, con su color dorado. Es miel cruda, sin procesar, de nuestras colmenas en Jamundí, Valle del Cauca. Viene en un recipiente transparente tipo estuche que protege el panal y evita derrames. Una forma auténtica y diferente de disfrutar la miel, del campo directo a tu mesa.",
+ car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Panal con miel sellada de forma natural en sus celdas de cera","Miel cruda, sin procesar","Color dorado","Contenido neto: 220 g","Envase: recipiente transparente tipo estuche que protege el panal y evita derrames","Sello «Con Sabor al Valle» y etiqueta Blemish"],
+ ben=["La experiencia de comer miel directamente del panal","Sabor auténtico de la miel en su forma más natural","Estuche práctico que cuida el panal y evita derrames","Del campo directo a tu mesa: apoyas lo local"],
+ uso=["Cómelo directo: corta un trocito con una cuchara y mastícalo. La cera se puede masticar o desechar después de disfrutar la miel.","Sírvelo sobre tostadas o pancakes, o con yogur y frutas.","Acompaña una tabla de quesos, galletas o carnes frías.","Guárdalo cerrado, en un lugar fresco y seco. No requiere refrigeración."],
+ precio="$20.000"),"miel-en-frasco":dict(pres="Frasco de vidrio con tapa hermética de clic y palito dispensador de madera · contenido neto 300 g",
+ desc="La misma miel de abejas multifloral, cruda y sin aditivos de nuestras colmenas en Jamundí, Valle del Cauca, en una presentación especial. Viene en un frasco de vidrio con tapa hermética de clic que la mantiene bien sellada, e incluye un palito dispensador de madera para servirla sin regueros. Sabor auténtico e intenso, del campo directo a tu mesa. Ideal para regalar o para lucir en la mesa.",
+ car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Tipo: miel multifloral","Miel cruda","Contenido neto: 300 g","Ingrediente: 100% miel de abejas, sin aditivos","Envase: frasco de vidrio con tapa hermética de clic (cierre de sellado)","Incluye: palito dispensador de miel en madera"],
+ ben=["Sabor auténtico e intenso de la miel multifloral del Valle del Cauca","Cierre hermético que la mantiene sellada después de abrirla","Palito de madera para servir la miel con facilidad","Presentación ideal para regalo o para la mesa","Del campo directo a tu mesa: apoyas lo local"],
+ uso=["Usa el palito de madera para servirla sobre pancakes, waffles o en tu té.","Endulza tus mañanas, tus bebidas, frutas, yogur y postres.","Después de usarla, cierra la tapa de clic y guárdala en un lugar fresco y seco, lejos de la luz directa del sol. No requiere refrigeración.","Es normal que la miel cruda se cristalice con el tiempo; para volverla líquida, calienta el frasco a baño maría suave."],
+ precio="$55.000"),"miel-en-botella":dict(pres="Botella de vidrio sellada con cordel y etiqueta en forma de panal · contenido neto 325 g",
+ desc="Miel de abejas multifloral, cruda y sin aditivos, de nuestras colmenas en Jamundí, Valle del Cauca. Es una miel artesanal: cuidamos cada detalle, desde la recolección hasta la etiqueta en forma de panal. Tiene un sabor auténtico e intenso y una textura suave. Llega sellada para garantizar su frescura, del campo directo a tu mesa. Al elegirla, apoyas a productores locales.",
+ car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Tipo: miel multifloral","Miel cruda","Contenido neto: 325 g","Ingrediente: 100% miel de abejas, sin aditivos","Envase: botella de vidrio sellada, con cordel y etiqueta en forma de panal"],
+ ben=["Sabor auténtico e intenso de la miel multifloral del Valle del Cauca","Del campo directo a tu mesa: apoyas lo local","Producto natural, sin ingredientes agregados","Envase de vidrio reutilizable"],
+ uso=["Endulza tus mañanas y tus bebidas favoritas.","Acompaña desayunos como pancakes y waffles, frutas, yogur y postres.","Consérvala bien tapada, en un lugar fresco y seco, lejos de la luz directa del sol. No requiere refrigeración.","Es normal que la miel cruda se cristalice con el tiempo; para volverla líquida, calienta el envase a baño maría suave."],
+ precio="$35.000")}
+def page(slug,name,img,cat):
+  d=FULL.get(slug)
+  EX={'miel-en-botella':['p-miel-500g','p-miel-500g-3'],'miel-en-frasco':['p-miel-650g','p-miel-650g-3'],'panal':['p-panal-2','p-panal'],'pipimiel':['p-pipimiel-2','p-pipimiel'],'jabon-de-miel':['jabon-2','jabon-3'],'jabon-hexagonal':['jabon-hexagonal-2','jabon-hexagonal-3']}
+  if img and EX.get(slug):
+    ims=[img]+EX[slug]
+    pic=f'<figure class="pf-main"><picture><source id="pf-src" srcset="../img/{img}.webp" type="image/webp"><img id="pf-img" src="../img/{img}.jpg" alt="{name}"></picture></figure><div class="pf-thumbs">'+''.join(f'<button type="button" data-i="{i}" aria-label="Ver foto {k+1}"{" class=on" if k==0 else ""}><img src="../img/{i}.webp" alt=""></button>' for k,i in enumerate(ims))+'</div><script>document.querySelectorAll(".pf-thumbs button").forEach(b=>b.onclick=()=>{const i=b.dataset.i;document.getElementById("pf-src").srcset="../img/"+i+".webp";document.getElementById("pf-img").src="../img/"+i+".jpg";document.querySelectorAll(".pf-thumbs button").forEach(x=>x.classList.toggle("on",x===b))})</script>'
+  elif img: pic=f'<figure class="pf-main"><picture><source srcset="../img/{img}.webp" type="image/webp"><img src="../img/{img}.jpg" alt="{name}" width="800" height="800"></picture></figure>'
+  else: pic='<figure class="pf-main"><div class="ph"><span>Foto pendiente</span></div></figure>'
+  q=WA+u.quote(f"Hola, quiero información sobre {name} de Finca Blemish")
+  if d:
+    li=lambda xs:"".join(f"<li>{x}</li>" for x in xs)
+    body=f'''<p class="pf-pres">{d["pres"]}</p><p class="pf-price">{d["precio"]} <small>IVA incluido</small></p>
+<p>{d["desc"]}</p>
+<div class="pf-btns"><button class="btn" disabled>Comprar · Próximamente</button> <a class="btn wa" href="{q}" target="_blank" rel="noopener">Pregunta por WhatsApp</a></div>
+<h2>Características</h2><ul class="pf-list">{li(d["car"])}</ul>
+<h2>Beneficios</h2><ul class="pf-list">{li(d["ben"])}</ul>
+<h2>Modo de uso y conservación</h2><ul class="pf-list">{li(d["uso"])}</ul>'''
+  else:
+    body=f'''<p class="pf-price"><small>Precio por confirmar</small></p><p class="pf-wip">Información en preparación.</p>
+<div class="pf-btns"><button class="btn" disabled>Comprar · Próximamente</button> <a class="btn wa" href="{q}" target="_blank" rel="noopener">Pregunta por WhatsApp</a></div>'''
+  h=head.replace('<title>Finca Blemish | Miel de abejas y productos de la colmena</title>',f'<title>{name} | Finca Blemish</title>')
+  h=re.sub(r'<meta name="description" content="[^"]*">',f'<meta name="description" content="{name} de Finca Blemish, Jamundí, Valle del Cauca.">',h)
+  h=h.replace('</head>',f'<link rel="canonical" href="https://fincablemish.com/productos/{slug}.html"></head>')
+  return h+hdr+f'''
+<main class="sec pf"><div class="wrap"><p class="pf-back"><a href="../index.html#productos">← Volver al catálogo</a> · <span>{cat}</span></p>
+<div class="pf-grid"><div class="pf-gal">{pic}</div><div class="pf-info"><h1>{name}</h1>{body}</div></div>
+<p class="pf-back"><a href="../index.html#productos">← Volver al catálogo</a></p></div></main>
+'''+foot+"</body></html>\n"
+for p in P: open(f"productos/{p[0]}.html","w").write(page(*p))
+# link cards
+cards=re.findall(r'<article class="card">.*?</article>',S,re.S)
+assert len(cards)==len(P),len(cards)
+for c,(slug,name,img,cat) in zip(cards,P):
+  n=re.sub(r'<a href="img/[^"]*" data-gallery="[^"]*" data-caption="[^"]*">(.*?)</a>',r'\1',c,flags=re.S)
+  n=n.replace('<article class="card">',f'<article class="card"><a class="card-link" href="productos/{slug}.html">',1).replace('</article>','</a></article>')
+  n=n.replace('<span class="badge">Próximamente</span>','<span class="badge">Ver ficha</span>')
+  S=S.replace(c,n,1)
+S=S.replace('styles.css?v=12','styles.css?v=14')
+for o in ['p-miel-500g','p-miel-650g','p-panal','p-pipimiel','jabon','jabon-hexagonal']:
+  S=S.replace(f'img/{o}.webp',f'img/{o}-ad.webp').replace(f'img/{o}.jpg',f'img/{o}-ad.jpg')
+open('index.html','w').write(S)

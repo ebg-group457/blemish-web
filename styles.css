@@ -87,3 +87,18 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .tina-fig figcaption{margin-top:.2rem;color:var(--g);font-family:"Yeseva One",serif;font-size:1.25rem;line-height:1.2;text-align:center}
 @media(min-width:761px){.tina-fig{flex-basis:min(44%,230px)}}
 @media(max-width:760px){.tina-fig{flex-basis:46%}.tina-fig figcaption{font-size:1.05rem}}
+.card-link{display:block;color:inherit;text-decoration:none}.card-link:hover h4{text-decoration:underline}
+.pf{padding-top:6rem}.pf-back a{color:var(--g);font-weight:700}.pf-back span{opacity:.7}
+.pf-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:2.5rem;align-items:start;margin:1rem 0 2rem}
+.pf-main{margin:0}.pf-main img{width:100%;height:auto;border-radius:12px;box-shadow:0 8px 24px rgba(1,48,37,.18)}.pf-main .ph{aspect-ratio:1}
+.pf-info h1{font-family:"Yeseva One",serif;font-weight:400;color:var(--g);font-size:clamp(1.9rem,4vw,2.6rem);margin:0 0 .4rem}
+.pf-info h2{font-size:1.25rem;margin:1.6rem 0 .5rem}
+.pf-pres{opacity:.8;margin:.2rem 0}.pf-price{font-family:"Yeseva One",serif;font-size:2rem;color:var(--g);margin:.6rem 0}.pf-price small{display:block;font-family:Nunito,sans-serif;font-size:.85rem;opacity:.75}
+.pf-btns{display:flex;flex-wrap:wrap;gap:.6rem;margin:1.2rem 0}.pf-btns button[disabled]{opacity:.55;cursor:not-allowed;border:0;font:inherit}
+.pf-list{padding-left:1.2rem;line-height:1.6}.pf-wip{font-style:italic;opacity:.8}
+@media(max-width:760px){.pf-grid{grid-template-columns:1fr;gap:1.2rem}.pf{padding-top:5rem}}
+.pf-main img{aspect-ratio:4/5;object-fit:cover}
+.pf-thumbs{display:flex;gap:.6rem;margin-top:.8rem}.pf-thumbs button{padding:0;border:2px solid transparent;border-radius:8px;overflow:hidden;cursor:pointer;width:84px;height:84px;background:none}
+.pf-thumbs button.on{border-color:var(--h)}.pf-thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.card img,.card .ph{aspect-ratio:4/5}
+.pf-main img{aspect-ratio:auto}.card img[src*="-ad."]{object-fit:contain;background:var(--c)}
