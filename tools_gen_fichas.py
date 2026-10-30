@@ -10,14 +10,18 @@ foot=re.search(r'<footer>.*?</footer>',S,re.S).group(0)
 WA="https://wa.me/573186506095?text="
 import urllib.parse as u
 FULL={"miel-en-botella":dict(pres="Botella de vidrio con cordel y etiqueta hexagonal · contenido neto 325 g",
- desc="Miel de abejas multifloral, cruda, 100% natural y pura, cosechada en nuestras colmenas de Finca Blemish en Jamundí, Valle del Cauca.",
- car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Tipo: miel multifloral","Miel cruda","Contenido neto: 325 g","Ingrediente: 100% miel de abejas, sin aditivos","Envase: botella de vidrio con cordel y etiqueta hexagonal"],
- ben=["Sabor y aroma de la miel multifloral del Valle del Cauca","Del productor a tu casa, sin intermediarios","Producto natural, sin ingredientes agregados","Envase de vidrio reutilizable"],
- uso=["Ideal para endulzar bebidas, acompañar frutas, yogur, panes o postres.","Consérvala bien tapada, en un lugar fresco y seco, lejos de la luz directa del sol. No requiere refrigeración.","Es normal que la miel cruda se cristalice con el tiempo; para volverla líquida, calienta el envase a baño maría suave."],
+ desc="Miel de abejas multifloral, cruda y sin aditivos, de nuestras colmenas en Jamundí, Valle del Cauca. Es una miel artesanal: cuidamos cada detalle, desde la recolección hasta la etiqueta en forma de panal. Tiene un sabor auténtico e intenso y una textura suave. Llega sellada para garantizar su frescura, del campo directo a tu mesa. Al elegirla, apoyas a productores locales.",
+ car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Tipo: miel multifloral","Miel cruda","Contenido neto: 325 g","Ingrediente: 100% miel de abejas, sin aditivos","Envase: botella de vidrio sellada, con cordel y etiqueta en forma de panal"],
+ ben=["Sabor auténtico e intenso de la miel multifloral del Valle del Cauca","Del campo directo a tu mesa: apoyas lo local","Producto natural, sin ingredientes agregados","Envase de vidrio reutilizable"],
+ uso=["Endulza tus mañanas y tus bebidas favoritas.","Acompaña desayunos como pancakes y waffles, frutas, yogur y postres.","Consérvala bien tapada, en un lugar fresco y seco, lejos de la luz directa del sol. No requiere refrigeración.","Es normal que la miel cruda se cristalice con el tiempo; para volverla líquida, calienta el envase a baño maría suave."],
  precio="$35.000")}
 def page(slug,name,img,cat):
   d=FULL.get(slug)
-  if img: pic=f'<figure class="pf-main"><picture><source srcset="../img/{img}.webp" type="image/webp"><img src="../img/{img}.jpg" alt="{name}" width="800" height="800"></picture></figure>'
+  EX={'miel-en-botella':['p-miel-500g-2']}
+  if img and EX.get(slug):
+    ims=[img]+EX[slug]
+    pic=f'<figure class="pf-main"><picture><source id="pf-src" srcset="../img/{img}.webp" type="image/webp"><img id="pf-img" src="../img/{img}.jpg" alt="{name}"></picture></figure><div class="pf-thumbs">'+''.join(f'<button type="button" data-i="{i}" aria-label="Ver foto {k+1}"{" class=on" if k==0 else ""}><img src="../img/{i}.webp" alt=""></button>' for k,i in enumerate(ims))+'</div><script>document.querySelectorAll(".pf-thumbs button").forEach(b=>b.onclick=()=>{const i=b.dataset.i;document.getElementById("pf-src").srcset="../img/"+i+".webp";document.getElementById("pf-img").src="../img/"+i+".jpg";document.querySelectorAll(".pf-thumbs button").forEach(x=>x.classList.toggle("on",x===b))})</script>'
+  elif img: pic=f'<figure class="pf-main"><picture><source srcset="../img/{img}.webp" type="image/webp"><img src="../img/{img}.jpg" alt="{name}" width="800" height="800"></picture></figure>'
   else: pic='<figure class="pf-main"><div class="ph"><span>Foto pendiente</span></div></figure>'
   q=WA+u.quote(f"Hola, quiero información sobre {name} de Finca Blemish")
   if d:
