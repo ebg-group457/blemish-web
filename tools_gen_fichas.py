@@ -2,14 +2,19 @@ import re,html
 S=open('index.html').read()
 if 'card-link' in S:
   import subprocess; S=subprocess.check_output(['git','show','main:index.html'],text=True)  # parte siempre del index original
-P=[("miel-en-botella","Miel en botella","p-miel-500g-ad","Mieles"),("miel-en-frasco","Miel en frasco","p-miel-650g-ad","Mieles"),("panal","Panal de miel","p-panal-ad","Mieles"),("pipimiel","Pipimiel (miel picante)","p-pipimiel-ad","Mieles"),("jabon-de-miel","Jabón de miel","jabon","Jabones de miel"),("jabon-hexagonal","Jabón hexagonal","jabon-hexagonal","Jabones de miel"),("vela-cera-de-abeja","Vela de cera de abeja",None,"Velas de cera de abeja"),("set-de-velas","Set de velas",None,"Velas de cera de abeja"),("polen","Polen","p-polen","Derivados"),("tintura-de-propoleo","Tintura de propóleo","p-tintura-propoleo","Derivados"),("fourvigor","Fourvigor","p-fourvigor","Derivados"),("dispensador-de-miel","Dispensador de miel","p-dispensador","Accesorios y kits"),("abeja-3d-en-madera","Abeja 3D en madera","p-abeja-3d","Accesorios y kits"),("kit-regalo","Kit regalo",None,"Accesorios y kits")]
+P=[("miel-en-botella","Miel en botella","p-miel-500g-ad","Mieles"),("miel-en-frasco","Miel en frasco","p-miel-650g-ad","Mieles"),("panal","Panal de miel","p-panal-ad","Mieles"),("pipimiel","Pipimiel (miel picante)","p-pipimiel-ad","Mieles"),("jabon-de-miel","Jabón de miel","jabon-ad","Jabones de miel"),("jabon-hexagonal","Jabón hexagonal","jabon-hexagonal","Jabones de miel"),("vela-cera-de-abeja","Vela de cera de abeja",None,"Velas de cera de abeja"),("set-de-velas","Set de velas",None,"Velas de cera de abeja"),("polen","Polen","p-polen","Derivados"),("tintura-de-propoleo","Tintura de propóleo","p-tintura-propoleo","Derivados"),("fourvigor","Fourvigor","p-fourvigor","Derivados"),("dispensador-de-miel","Dispensador de miel","p-dispensador","Accesorios y kits"),("abeja-3d-en-madera","Abeja 3D en madera","p-abeja-3d","Accesorios y kits"),("kit-regalo","Kit regalo",None,"Accesorios y kits")]
 head=S.split('<header')[0].replace('styles.css','../styles.css')
 hdr=re.search(r'<header.*?</header>',S,re.S).group(0)
 hdr=hdr.replace('href="#','href="../index.html#').replace('src="img/','src="../img/')
 foot=re.search(r'<footer>.*?</footer>',S,re.S).group(0)
 WA="https://wa.me/573186506095?text="
 import urllib.parse as u
-FULL={"pipimiel":dict(pres="Frasco de vidrio clásico con etiqueta hexagonal PIPIMIEL · contenido neto 150 g",
+FULL={"jabon-de-miel":dict(pres="Barra redonda translúcida color ámbar con una abeja grabada en el centro · 50 g",
+ desc="Jabón artesanal hecho con miel de abejas 100% natural de nuestras colmenas en Jamundí. Ofrece una limpieza suave sin resecar, deja la piel suave y tiene el aroma y la dulzura de la miel. Libre de químicos agresivos, es para el uso diario en manos, rostro y cuerpo, en todo tipo de piel.",
+ car=["Origen: Finca Blemish, Jamundí, Valle del Cauca (Colombia)","Elaborado con miel de abejas 100% natural","Barra redonda translúcida color ámbar, con abeja grabada en el centro","Peso: 50 g","Libre de químicos agresivos","Ingredientes (INCI): por confirmar"],
+ ben=["Limpieza suave sin resecar","Deja la piel suave","Aroma y dulzura de la miel","Para uso diario en manos, rostro y cuerpo"],
+ uso=["Humedece la piel y aplica el jabón con movimientos circulares suaves hasta formar espuma.","Masajea y enjuaga con abundante agua.","Después de cada uso, déjalo en un lugar seco para que dure más."],
+ precio="$12.900"),"pipimiel":dict(pres="Frasco de vidrio clásico con etiqueta hexagonal PIPIMIEL · contenido neto 150 g",
  desc="Nuestra miel picante: una fusión de miel de abejas de nuestras colmenas en Jamundí con pipilongo, una pimienta verde. Dulce y picante a la vez, para darle un toque diferente a tus comidas y sorprender a tus invitados.",
  car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Ingredientes: miel de abejas y pipilongo (pimienta verde)","Sabor: dulce con un toque picante","Contenido neto: 150 g","Envase: frasco de vidrio clásico con etiqueta hexagonal PIPIMIEL"],
  ben=["Una combinación original de dulce y picante","Hecha con miel de nuestra finca","Ideal para sorprender a tus invitados","Del campo directo a tu mesa: apoyas lo local"],
@@ -32,7 +37,7 @@ FULL={"pipimiel":dict(pres="Frasco de vidrio clásico con etiqueta hexagonal PIP
  precio="$35.000")}
 def page(slug,name,img,cat):
   d=FULL.get(slug)
-  EX={'miel-en-botella':['p-miel-500g','p-miel-500g-3'],'miel-en-frasco':['p-miel-650g','p-miel-650g-3'],'panal':['p-panal-2','p-panal'],'pipimiel':['p-pipimiel-2','p-pipimiel']}
+  EX={'miel-en-botella':['p-miel-500g','p-miel-500g-3'],'miel-en-frasco':['p-miel-650g','p-miel-650g-3'],'panal':['p-panal-2','p-panal'],'pipimiel':['p-pipimiel-2','p-pipimiel'],'jabon-de-miel':['jabon-2','jabon-3']}
   if img and EX.get(slug):
     ims=[img]+EX[slug]
     pic=f'<figure class="pf-main"><picture><source id="pf-src" srcset="../img/{img}.webp" type="image/webp"><img id="pf-img" src="../img/{img}.jpg" alt="{name}"></picture></figure><div class="pf-thumbs">'+''.join(f'<button type="button" data-i="{i}" aria-label="Ver foto {k+1}"{" class=on" if k==0 else ""}><img src="../img/{i}.webp" alt=""></button>' for k,i in enumerate(ims))+'</div><script>document.querySelectorAll(".pf-thumbs button").forEach(b=>b.onclick=()=>{const i=b.dataset.i;document.getElementById("pf-src").srcset="../img/"+i+".webp";document.getElementById("pf-img").src="../img/"+i+".jpg";document.querySelectorAll(".pf-thumbs button").forEach(x=>x.classList.toggle("on",x===b))})</script>'
@@ -68,6 +73,6 @@ for c,(slug,name,img,cat) in zip(cards,P):
   n=n.replace('<span class="badge">Próximamente</span>','<span class="badge">Ver ficha</span>')
   S=S.replace(c,n,1)
 S=S.replace('styles.css?v=12','styles.css?v=14')
-for o in ['p-miel-500g','p-miel-650g','p-panal','p-pipimiel']:
+for o in ['p-miel-500g','p-miel-650g','p-panal','p-pipimiel','jabon']:
   S=S.replace(f'img/{o}.webp',f'img/{o}-ad.webp').replace(f'img/{o}.jpg',f'img/{o}-ad.jpg')
 open('index.html','w').write(S)
