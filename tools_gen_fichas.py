@@ -2,14 +2,19 @@ import re,html
 S=open('index.html').read()
 if 'card-link' in S:
   import subprocess; S=subprocess.check_output(['git','show','main:index.html'],text=True)  # parte siempre del index original
-P=[("miel-en-botella","Miel en botella","p-miel-500g-ad","Mieles"),("miel-en-frasco","Miel en frasco","p-miel-650g-ad","Mieles"),("panal","Panal de miel","p-panal-ad","Mieles"),("pipimiel","Pipimiel (miel picante)","p-pipimiel","Mieles"),("jabon-de-miel","Jabón de miel","jabon","Jabones de miel"),("jabon-hexagonal","Jabón hexagonal","jabon-hexagonal","Jabones de miel"),("vela-cera-de-abeja","Vela de cera de abeja",None,"Velas de cera de abeja"),("set-de-velas","Set de velas",None,"Velas de cera de abeja"),("polen","Polen","p-polen","Derivados"),("tintura-de-propoleo","Tintura de propóleo","p-tintura-propoleo","Derivados"),("fourvigor","Fourvigor","p-fourvigor","Derivados"),("dispensador-de-miel","Dispensador de miel","p-dispensador","Accesorios y kits"),("abeja-3d-en-madera","Abeja 3D en madera","p-abeja-3d","Accesorios y kits"),("kit-regalo","Kit regalo",None,"Accesorios y kits")]
+P=[("miel-en-botella","Miel en botella","p-miel-500g-ad","Mieles"),("miel-en-frasco","Miel en frasco","p-miel-650g-ad","Mieles"),("panal","Panal de miel","p-panal-ad","Mieles"),("pipimiel","Pipimiel (miel picante)","p-pipimiel-ad","Mieles"),("jabon-de-miel","Jabón de miel","jabon","Jabones de miel"),("jabon-hexagonal","Jabón hexagonal","jabon-hexagonal","Jabones de miel"),("vela-cera-de-abeja","Vela de cera de abeja",None,"Velas de cera de abeja"),("set-de-velas","Set de velas",None,"Velas de cera de abeja"),("polen","Polen","p-polen","Derivados"),("tintura-de-propoleo","Tintura de propóleo","p-tintura-propoleo","Derivados"),("fourvigor","Fourvigor","p-fourvigor","Derivados"),("dispensador-de-miel","Dispensador de miel","p-dispensador","Accesorios y kits"),("abeja-3d-en-madera","Abeja 3D en madera","p-abeja-3d","Accesorios y kits"),("kit-regalo","Kit regalo",None,"Accesorios y kits")]
 head=S.split('<header')[0].replace('styles.css','../styles.css')
 hdr=re.search(r'<header.*?</header>',S,re.S).group(0)
 hdr=hdr.replace('href="#','href="../index.html#').replace('src="img/','src="../img/')
 foot=re.search(r'<footer>.*?</footer>',S,re.S).group(0)
 WA="https://wa.me/573186506095?text="
 import urllib.parse as u
-FULL={"panal":dict(pres="Recipiente transparente tipo estuche, sello «Con Sabor al Valle» y etiqueta Blemish · contenido neto 220 g",
+FULL={"pipimiel":dict(pres="Frasco de vidrio clásico con etiqueta hexagonal PIPIMIEL · contenido neto 150 g",
+ desc="Nuestra miel picante: una fusión de miel de abejas de nuestras colmenas en Jamundí con pipilongo, una pimienta verde. Dulce y picante a la vez, para darle un toque diferente a tus comidas y sorprender a tus invitados.",
+ car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Ingredientes: miel de abejas y pipilongo (pimienta verde)","Sabor: dulce con un toque picante","Contenido neto: 150 g","Envase: frasco de vidrio clásico con etiqueta hexagonal PIPIMIEL"],
+ ben=["Una combinación original de dulce y picante","Hecha con miel de nuestra finca","Ideal para sorprender a tus invitados","Del campo directo a tu mesa: apoyas lo local"],
+ uso=["Úsala para glasear carnes y darle brillo y sabor a tus asados.","Prepara un aderezo innovador para tus ensaladas.","Sírvela en la mesa para que cada quien la pruebe a su gusto.","Guárdala bien tapada, en un lugar fresco y seco, lejos de la luz directa del sol."],
+ precio="$15.000"),"panal":dict(pres="Recipiente transparente tipo estuche, sello «Con Sabor al Valle» y etiqueta Blemish · contenido neto 220 g",
  desc="Miel tal como la hacen las abejas: sellada de forma natural en sus celdas de cera, con su color dorado. Es miel cruda, sin procesar, de nuestras colmenas en Jamundí, Valle del Cauca. Viene en un recipiente transparente tipo estuche que protege el panal y evita derrames. Una forma auténtica y diferente de disfrutar la miel, del campo directo a tu mesa.",
  car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Panal con miel sellada de forma natural en sus celdas de cera","Miel cruda, sin procesar","Color dorado","Contenido neto: 220 g","Envase: recipiente transparente tipo estuche que protege el panal y evita derrames","Sello «Con Sabor al Valle» y etiqueta Blemish"],
  ben=["La experiencia de comer miel directamente del panal","Sabor auténtico de la miel en su forma más natural","Estuche práctico que cuida el panal y evita derrames","Del campo directo a tu mesa: apoyas lo local"],
@@ -27,7 +32,7 @@ FULL={"panal":dict(pres="Recipiente transparente tipo estuche, sello «Con Sabor
  precio="$35.000")}
 def page(slug,name,img,cat):
   d=FULL.get(slug)
-  EX={'miel-en-botella':['p-miel-500g','p-miel-500g-3'],'miel-en-frasco':['p-miel-650g','p-miel-650g-3'],'panal':['p-panal-2','p-panal']}
+  EX={'miel-en-botella':['p-miel-500g','p-miel-500g-3'],'miel-en-frasco':['p-miel-650g','p-miel-650g-3'],'panal':['p-panal-2','p-panal'],'pipimiel':['p-pipimiel-2','p-pipimiel']}
   if img and EX.get(slug):
     ims=[img]+EX[slug]
     pic=f'<figure class="pf-main"><picture><source id="pf-src" srcset="../img/{img}.webp" type="image/webp"><img id="pf-img" src="../img/{img}.jpg" alt="{name}"></picture></figure><div class="pf-thumbs">'+''.join(f'<button type="button" data-i="{i}" aria-label="Ver foto {k+1}"{" class=on" if k==0 else ""}><img src="../img/{i}.webp" alt=""></button>' for k,i in enumerate(ims))+'</div><script>document.querySelectorAll(".pf-thumbs button").forEach(b=>b.onclick=()=>{const i=b.dataset.i;document.getElementById("pf-src").srcset="../img/"+i+".webp";document.getElementById("pf-img").src="../img/"+i+".jpg";document.querySelectorAll(".pf-thumbs button").forEach(x=>x.classList.toggle("on",x===b))})</script>'
@@ -63,6 +68,6 @@ for c,(slug,name,img,cat) in zip(cards,P):
   n=n.replace('<span class="badge">Próximamente</span>','<span class="badge">Ver ficha</span>')
   S=S.replace(c,n,1)
 S=S.replace('styles.css?v=12','styles.css?v=14')
-for o in ['p-miel-500g','p-miel-650g','p-panal']:
+for o in ['p-miel-500g','p-miel-650g','p-panal','p-pipimiel']:
   S=S.replace(f'img/{o}.webp',f'img/{o}-ad.webp').replace(f'img/{o}.jpg',f'img/{o}-ad.jpg')
 open('index.html','w').write(S)
