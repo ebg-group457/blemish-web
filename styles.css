@@ -101,3 +101,4 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .pf-thumbs{display:flex;gap:.6rem;margin-top:.8rem}.pf-thumbs button{padding:0;border:2px solid transparent;border-radius:8px;overflow:hidden;cursor:pointer;width:84px;height:84px;background:none}
 .pf-thumbs button.on{border-color:var(--h)}.pf-thumbs img{width:100%;height:100%;object-fit:cover;display:block}
 .card img,.card .ph{aspect-ratio:4/5}
+.pf-main img{aspect-ratio:auto}.card img[src*="-ad."]{object-fit:contain;background:var(--c)}
