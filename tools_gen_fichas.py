@@ -14,7 +14,7 @@ FULL={"jabon-de-miel":dict(pres="Barra redonda translúcida color ámbar con una
  car=["Origen: Finca Blemish, Jamundí, Valle del Cauca (Colombia)","Elaborado con miel de abejas 100% natural","Barra redonda translúcida color ámbar, con abeja grabada en el centro","Peso: 50 g","Libre de químicos agresivos","Ingredientes (INCI): por confirmar"],
  ben=["Limpieza suave sin resecar","Deja la piel suave","Aroma y dulzura de la miel","Para uso diario en manos, rostro y cuerpo"],
  uso=["Humedece la piel y aplica el jabón con movimientos circulares suaves hasta formar espuma.","Masajea y enjuaga con abundante agua.","Después de cada uso, déjalo en un lugar seco para que dure más."],
- precio="$12.900"),"pipimiel":dict(pres="Frasco de vidrio clásico con etiqueta hexagonal PIPIMIEL · contenido neto 150 g",
+ precio="$13.000"),"pipimiel":dict(pres="Frasco de vidrio clásico con etiqueta hexagonal PIPIMIEL · contenido neto 150 g",
  desc="Nuestra miel picante: una fusión de miel de abejas de nuestras colmenas en Jamundí con pipilongo, una pimienta verde. Dulce y picante a la vez, para darle un toque diferente a tus comidas y sorprender a tus invitados.",
  car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Ingredientes: miel de abejas y pipilongo (pimienta verde)","Sabor: dulce con un toque picante","Contenido neto: 150 g","Envase: frasco de vidrio clásico con etiqueta hexagonal PIPIMIEL"],
  ben=["Una combinación original de dulce y picante","Hecha con miel de nuestra finca","Ideal para sorprender a tus invitados","Del campo directo a tu mesa: apoyas lo local"],
