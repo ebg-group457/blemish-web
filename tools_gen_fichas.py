@@ -9,7 +9,12 @@ hdr=hdr.replace('href="#','href="../index.html#').replace('src="img/','src="../i
 foot=re.search(r'<footer>.*?</footer>',S,re.S).group(0)
 WA="https://wa.me/573186506095?text="
 import urllib.parse as u
-FULL={"miel-en-botella":dict(pres="Botella de vidrio sellada con cordel y etiqueta en forma de panal · contenido neto 325 g",
+FULL={"miel-en-frasco":dict(pres="Frasco de vidrio con tapa hermética de clic y palito dispensador de madera · contenido neto 300 g",
+ desc="La misma miel de abejas multifloral, cruda y sin aditivos de nuestras colmenas en Jamundí, Valle del Cauca, en una presentación especial. Viene en un frasco de vidrio con tapa hermética de clic que la mantiene bien sellada, e incluye un palito dispensador de madera para servirla sin regueros. Sabor auténtico e intenso, del campo directo a tu mesa. Ideal para regalar o para lucir en la mesa.",
+ car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Tipo: miel multifloral","Miel cruda","Contenido neto: 300 g","Ingrediente: 100% miel de abejas, sin aditivos","Envase: frasco de vidrio con tapa hermética de clic (cierre de sellado)","Incluye: palito dispensador de miel en madera"],
+ ben=["Sabor auténtico e intenso de la miel multifloral del Valle del Cauca","Cierre hermético que la mantiene sellada después de abrirla","Palito de madera para servir la miel con facilidad","Presentación ideal para regalo o para la mesa","Del campo directo a tu mesa: apoyas lo local"],
+ uso=["Usa el palito de madera para servirla sobre pancakes, waffles o en tu té.","Endulza tus mañanas, tus bebidas, frutas, yogur y postres.","Después de usarla, cierra la tapa de clic y guárdala en un lugar fresco y seco, lejos de la luz directa del sol. No requiere refrigeración.","Es normal que la miel cruda se cristalice con el tiempo; para volverla líquida, calienta el frasco a baño maría suave."],
+ precio="$55.000"),"miel-en-botella":dict(pres="Botella de vidrio sellada con cordel y etiqueta en forma de panal · contenido neto 325 g",
  desc="Miel de abejas multifloral, cruda y sin aditivos, de nuestras colmenas en Jamundí, Valle del Cauca. Es una miel artesanal: cuidamos cada detalle, desde la recolección hasta la etiqueta en forma de panal. Tiene un sabor auténtico e intenso y una textura suave. Llega sellada para garantizar su frescura, del campo directo a tu mesa. Al elegirla, apoyas a productores locales.",
  car=["Origen: Finca Blemish, Quinamayo / Playa Amarilla, Jamundí, Valle del Cauca (Colombia)","Tipo: miel multifloral","Miel cruda","Contenido neto: 325 g","Ingrediente: 100% miel de abejas, sin aditivos","Envase: botella de vidrio sellada, con cordel y etiqueta en forma de panal"],
  ben=["Sabor auténtico e intenso de la miel multifloral del Valle del Cauca","Del campo directo a tu mesa: apoyas lo local","Producto natural, sin ingredientes agregados","Envase de vidrio reutilizable"],
@@ -17,7 +22,7 @@ FULL={"miel-en-botella":dict(pres="Botella de vidrio sellada con cordel y etique
  precio="$35.000")}
 def page(slug,name,img,cat):
   d=FULL.get(slug)
-  EX={'miel-en-botella':['p-miel-500g-2','p-miel-500g-3']}
+  EX={'miel-en-botella':['p-miel-500g-2','p-miel-500g-3'],'miel-en-frasco':['p-miel-650g-2','p-miel-650g-3']}
   if img and EX.get(slug):
     ims=[img]+EX[slug]
     pic=f'<figure class="pf-main"><picture><source id="pf-src" srcset="../img/{img}.webp" type="image/webp"><img id="pf-img" src="../img/{img}.jpg" alt="{name}"></picture></figure><div class="pf-thumbs">'+''.join(f'<button type="button" data-i="{i}" aria-label="Ver foto {k+1}"{" class=on" if k==0 else ""}><img src="../img/{i}.webp" alt=""></button>' for k,i in enumerate(ims))+'</div><script>document.querySelectorAll(".pf-thumbs button").forEach(b=>b.onclick=()=>{const i=b.dataset.i;document.getElementById("pf-src").srcset="../img/"+i+".webp";document.getElementById("pf-img").src="../img/"+i+".jpg";document.querySelectorAll(".pf-thumbs button").forEach(x=>x.classList.toggle("on",x===b))})</script>'
