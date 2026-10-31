@@ -144,3 +144,5 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .reach-yt{position:relative;display:block;cursor:pointer}
 .reach-yt .yt-label{position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.55);color:#fff;font-size:.78rem;padding:4px 9px;border-radius:999px;pointer-events:none;opacity:.85;transition:opacity .2s}
 .reach-yt:hover .yt-label{opacity:1}
+.reach-yt .sound-btn{position:absolute;left:10px;bottom:10px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:16px;cursor:pointer;line-height:1}
+.reach-yt .sound-btn[hidden]{display:none}
