@@ -141,3 +141,6 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .xcard img{height:auto}.xcard picture{display:block}
 
 .reach .reach-video{display:block;width:100%;height:auto;aspect-ratio:1200/666;object-fit:cover;border-radius:12px;box-shadow:0 8px 24px rgba(1,48,37,.18);background:#013025;cursor:pointer}
+.reach-yt{position:relative;display:block;cursor:pointer}
+.reach-yt .yt-label{position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.55);color:#fff;font-size:.78rem;padding:4px 9px;border-radius:999px;pointer-events:none;opacity:.85;transition:opacity .2s}
+.reach-yt:hover .yt-label{opacity:1}
