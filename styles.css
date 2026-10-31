@@ -139,3 +139,5 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .cal-g button{position:relative}.cal-g .poco::after,.d-poco{content:"";position:absolute;top:2px;right:2px;width:.55rem;height:.55rem;border-radius:50%;background:var(--h);border:1px solid #fff}.d-poco{position:static;display:inline-block}
 .rsv-plan-sum b{font-weight:800}.rsv-nota{display:block;background:#FFF2C6;border-left:5px solid var(--h);padding:.6rem .8rem;margin:.3rem 0;border-radius:6px;color:var(--g)}.rsv-nota b{font-weight:800}
 .xcard img{height:auto}.xcard picture{display:block}
+
+.reach .reach-video{display:block;width:100%;height:auto;aspect-ratio:1200/666;object-fit:cover;border-radius:12px;box-shadow:0 8px 24px rgba(1,48,37,.18);background:#013025;cursor:pointer}
