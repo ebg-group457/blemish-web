@@ -57,10 +57,15 @@ function tot(){if($('rsv-err2'))$('rsv-err2').textContent='';$('rsv-regla').text
  if(pl.p){let t=0;TIPOS.forEach(([k])=>t+=T(k)*pl.p[k]);h='Total estimado: <b>'+cop(t)+'</b><br>Abono para confirmar (40%): <b>'+cop(Math.round(t*.4))+'</b><br><small>Adultos $55.000 · Niños $50.000 · Bebés gratis</small>';pl.t=t;}
  else h='Precio: <b>a cotizar</b>. Te enviaremos la cotización por WhatsApp; el abono es del 40%.';
  $('rsv-tot').innerHTML=h;}
-function resumen(){const pl=PLANES[$('rsv-plan').value];const L=['Hola, quiero reservar una visita a Finca Blemish.','Fecha: '+larga(sel),'Plan: '+pl.n,'Visitantes:'];
- TIPOS.forEach(([k,n,e])=>{if(T(k))L.push('- '+n+' ('+e+'): '+T(k)+' (H '+cnt[k].h+' / M '+cnt[k].m+')');});
- L.push(pl.p?'Total estimado: '+cop(pl.t)+' · Abono 40%: '+cop(Math.round(pl.t*.4)):'Precio: a cotizar');
- L.push('Nombre: '+$('rsv-nom').value.trim(),'Teléfono: '+$('rsv-tel').value.trim(),'Correo: '+$('rsv-mail').value.trim(),'Acepto la Política de Tratamiento de Datos Personales.');return L;}
+function resumen(){const k=$('rsv-plan').value,pl=PLANES[k];const CORTO={t:'Un Viaje a la Miel',e:'Plan Estudiantil',m:'Plan Empresarial'};
+ const sx=x=>'('+cnt[x].h+' H, '+cnt[x].m+' M)';
+ const L=['Hola, quiero reservar una visita a Finca Blemish'+(k==='t'?' para ser Apicultor por un día':''),'','*Fecha:* '+larga(sel)+(FESTIVOS.includes(iso(sel))?' (festivo)':''),'','*Plan:* '+CORTO[k],'','*Participantes:*'];
+ if(T('ad'))L.push('• Adultos: '+T('ad')+' '+sx('ad')+(pl.p?' x '+cop(pl.p.ad)+' = '+cop(T('ad')*pl.p.ad):''));
+ if(T('ni'))L.push('• Niños: '+T('ni')+' '+sx('ni')+(pl.p?' x '+cop(pl.p.ni)+' = '+cop(T('ni')*pl.p.ni):''));
+ if(T('be'))L.push('• Bebés: '+T('be')+' '+sx('be')+' (gratis)');
+ L.push('• Total personas: '+(PER()+T('be')),'');
+ L.push(pl.p?'*Total estimado:* '+cop(pl.t)+' · *Abono 40%:* '+cop(Math.round(pl.t*.4)):'*Total estimado:* a cotizar · *Abono 40%:* a cotizar');
+ L.push('','*Nombre:* '+$('rsv-nom').value.trim(),'*Teléfono:* '+$('rsv-tel').value.trim(),'*Correo:* '+$('rsv-mail').value.trim(),'✅ Acepto la Política de Tratamiento de Datos Personales.');return L;}
 function guardar(){if(!APPS_SCRIPT_URL)return;const pl=PLANES[$('rsv-plan').value];
  const d={fecha:iso(sel),tipoDia:esFS()?(FESTIVOS.includes(iso(sel))?'Festivo':'Fin de semana'):'Martes a viernes',plan:pl.n,adH:cnt.ad.h,adM:cnt.ad.m,niH:cnt.ni.h,niM:cnt.ni.m,beH:cnt.be.h,beM:cnt.be.m,personas:PER()+T('be'),total:pl.p?pl.t:'A cotizar',abono:pl.p?Math.round(pl.t*.4):'A cotizar',nombre:$('rsv-nom').value.trim(),telefono:$('rsv-tel').value.trim(),correo:$('rsv-mail').value.trim(),acepto:'Sí'};
  try{fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d),keepalive:true}).catch(()=>{});}catch(_){}}
@@ -71,7 +76,7 @@ $('rsv-s2').onsubmit=ev=>{ev.preventDefault();let e=err();
  if(!e&&!$('rsv-acepto').checked)e='Debes aceptar la Política de Tratamiento de Datos Personales.';
  $('rsv-err').textContent=e;const e2=$('rsv-err2');e2.textContent=e;if(e){e2.scrollIntoView({behavior:'smooth',block:'center'});return;}
  const L=resumen(),r=$('rsv-res');
- if(r.hidden){r.innerHTML='<b>Revisa tu solicitud:</b><br>'+L.slice(1).map(x=>x.replace(/</g,'&lt;')).join('<br>')+'<br><br>Si todo está bien, pulsa de nuevo «Enviar solicitud por WhatsApp».';r.hidden=false;r.scrollIntoView({block:'nearest'});return;}
+ if(r.hidden){r.innerHTML='<b>Revisa tu solicitud:</b><br>'+L.slice(2).map(x=>{x=x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*([^*]+)\*/g,'<b>$1</b>');return x.startsWith('<b>Plan:</b>')?'<span class="rsv-plan-sum">'+x+'</span>':x;}).join('<br>')+'<br><br>Si todo está bien, pulsa de nuevo «Enviar solicitud por WhatsApp».';r.hidden=false;r.scrollIntoView({block:'nearest'});return;}
  guardar();
  window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(L.join('\n')),'_blank','noopener');};
 ['rsv-plan','rsv-nom','rsv-tel','rsv-mail'].forEach(i=>$(i).addEventListener('input',()=>{$('rsv-res').hidden=true;}));

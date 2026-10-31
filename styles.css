@@ -135,3 +135,4 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .d-fs,.cal-g .fs{background:#2F6FB5;color:#fff}.cal-g .fs:hover{outline:3px solid var(--h)}
 .rsv-err2:empty{display:none}.rsv-err2{background:#fdecec;border:2px solid #D64545;color:#B02A2A;font-weight:700;border-radius:8px;padding:.6rem .8rem;margin:.6rem 0 0}#rsv-s2 .btn.wa{opacity:1;cursor:pointer}
 .rsv-err2,#rsv-err,.rsv-note{text-align:left}
+#rsv-s2 select#rsv-plan{font-size:1.25rem;font-weight:700;color:var(--g)}.rsv-plan-sum{font-size:1.25rem}.rsv-plan-sum b{font-weight:700}
