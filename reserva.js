@@ -12,7 +12,7 @@ const MIN_ENTRE_SEMANA = 16; // más de 15 personas (sin contar bebés)
 const CUPO_FIN_SEMANA = 25;  // cupo máximo por día (sin contar bebés)
 const WHATSAPP = '573186506095';
 /* URL de la aplicación web de Google Apps Script que guarda cada solicitud en la hoja de Drive. Vacío = no se envía. */
-const APPS_SCRIPT_URL = '';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwe23S-Tyg5Q4afsYdWWR0yUTItj7eO7vi_zYb5qxbeYBKpA1_iYXRZgooLjP-5oZTUNQ/exec';
 (function(){
 const $=id=>document.getElementById(id);
 const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
