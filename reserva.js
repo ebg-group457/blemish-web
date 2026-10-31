@@ -72,13 +72,13 @@ function tot(){if($('rsv-err2'))$('rsv-err2').textContent='';$('rsv-regla').text
  $('rsv-tot').innerHTML=h;}
 function resumen(){const k=$('rsv-plan').value,pl=PLANES[k];const CORTO={t:'Un Viaje a la Miel',e:'Plan Estudiantil',m:'Plan Empresarial'};
  const sx=x=>'('+cnt[x].h+' H, '+cnt[x].m+' M)';
- const L=['Hola, quiero reservar una visita a Finca Blemish'+(k==='t'?' para ser Apicultor por un día':''),'','*Fecha:* '+larga(sel)+(FESTIVOS.includes(iso(sel))?' (festivo)':''),'','*Plan:* '+CORTO[k],'','*Participantes:*'];
+ const L=['Hola, quiero reservar una visita a Finca Blemish'+(k==='t'?' para ser Apicultor por un día':''),'','*Fecha:* '+larga(sel)+(FESTIVOS.includes(iso(sel))?' (festivo)':''),'','*Plan: '+CORTO[k]+'*','','*Participantes:*'];
  if(T('ad'))L.push('• Adultos: '+T('ad')+' '+sx('ad')+(pl.p?' x '+cop(pl.p.ad)+' = '+cop(T('ad')*pl.p.ad):''));
  if(T('ni'))L.push('• Niños: '+T('ni')+' '+sx('ni')+(pl.p?' x '+cop(pl.p.ni)+' = '+cop(T('ni')*pl.p.ni):''));
  if(T('be'))L.push('• Bebés: '+T('be')+' '+sx('be')+' (gratis)');
  L.push('• Total personas: '+(PER()+T('be')),'');
  L.push(pl.p?'*Total estimado:* '+cop(pl.t)+' · *Abono 40%:* '+cop(Math.round(pl.t*.4)):'*Total estimado:* a cotizar · *Abono 40%:* a cotizar');
- const X=ENT[k];L.push('');if(X)L.push('*'+X[0]+':* '+$('rsv-ent').value.trim());L.push('*Nombre:* '+$('rsv-nom').value.trim(),'*Teléfono:* '+$('rsv-tel').value.trim(),'*Correo:* '+$('rsv-mail').value.trim(),'✅ Acepto la Política de Tratamiento de Datos Personales.');return L;}
+ const X=ENT[k];L.push('');if(X)L.push('*'+X[0]+':* '+$('rsv-ent').value.trim());L.push('*Nombre:* '+$('rsv-nom').value.trim(),'*Teléfono:* '+$('rsv-tel').value.trim(),'*Correo:* '+$('rsv-mail').value.trim(),'✅ Acepto la Política de Tratamiento de Datos Personales.','','*NOTA:* La fecha escogida está sujeta a acomodación. *NOS COMUNICAREMOS PARA CONFIRMACIÓN*');return L;}
 function guardar(){if(!APPS_SCRIPT_URL)return;const pl=PLANES[$('rsv-plan').value];
  const d={fecha:iso(sel),tipoDia:esFS()?(FESTIVOS.includes(iso(sel))?'Festivo':'Fin de semana'):'Martes a viernes',plan:pl.n,adH:cnt.ad.h,adM:cnt.ad.m,niH:cnt.ni.h,niM:cnt.ni.m,beH:cnt.be.h,beM:cnt.be.m,personas:PER()+T('be'),total:pl.p?pl.t:'A cotizar',abono:pl.p?Math.round(pl.t*.4):'A cotizar',nombre:$('rsv-nom').value.trim(),telefono:$('rsv-tel').value.trim(),correo:$('rsv-mail').value.trim(),acepto:'Sí',entidad:ENT[$('rsv-plan').value]?$('rsv-ent').value.trim():''};
  try{fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d),keepalive:true}).catch(()=>{});}catch(_){}}
@@ -90,7 +90,7 @@ $('rsv-s2').onsubmit=ev=>{ev.preventDefault();let e=err();
  if(!e&&!$('rsv-acepto').checked)e='Debes aceptar la Política de Tratamiento de Datos Personales.';
  $('rsv-err').textContent=e;const e2=$('rsv-err2');e2.textContent=e;if(e){e2.scrollIntoView({behavior:'smooth',block:'center'});return;}
  const L=resumen(),r=$('rsv-res');
- if(r.hidden){r.innerHTML='<b>Revisa tu solicitud:</b><br>'+L.slice(2).map(x=>{x=x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*([^*]+)\*/g,'<b>$1</b>');return x.startsWith('<b>Plan:</b>')?'<span class="rsv-plan-sum">'+x+'</span>':x;}).join('<br>')+'<br><br>Si todo está bien, pulsa de nuevo «Enviar solicitud por WhatsApp».';r.hidden=false;r.scrollIntoView({block:'nearest'});return;}
+ if(r.hidden){r.innerHTML='<b>Revisa tu solicitud:</b><br>'+L.slice(2).map(x=>{x=x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*([^*]+)\*/g,'<b>$1</b>');return x.startsWith('<b>Plan:')?'<span class="rsv-plan-sum">'+x+'</span>':x.startsWith('<b>NOTA:')?'<span class="rsv-nota">'+x+'</span>':x;}).join('<br>')+'<br><br>Si todo está bien, pulsa de nuevo «Enviar solicitud por WhatsApp».';r.hidden=false;r.scrollIntoView({block:'nearest'});return;}
  guardar();
  window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(L.join('\n')),'_blank','noopener');};
 ['rsv-plan','rsv-ent','rsv-nom','rsv-tel','rsv-mail'].forEach(i=>$(i).addEventListener('input',()=>{$('rsv-res').hidden=true;}));
