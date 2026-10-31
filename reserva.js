@@ -3,12 +3,19 @@ const NO_DISPONIBLES = [
   // '2026-11-13',
 ];
 const ANTICIPACION_DIAS = 5;
+/* Festivos de Colombia (Ley 51 de 1983 / Ley Emiliani, ya trasladados a lunes). Se muestran en azul, incluso si caen lunes. */
+const FESTIVOS = [
+ '2026-01-01','2026-01-12','2026-03-23','2026-04-02','2026-04-03','2026-05-01','2026-05-18','2026-06-08','2026-06-15','2026-06-29','2026-07-20','2026-08-07','2026-08-17','2026-10-12','2026-11-02','2026-11-16','2026-12-08','2026-12-25',
+ '2027-01-01','2027-01-11','2027-03-22','2027-03-25','2027-03-26','2027-05-01','2027-05-10','2027-05-31','2027-06-07','2027-07-05','2027-07-20','2027-08-07','2027-08-16','2027-10-18','2027-11-01','2027-11-15','2027-12-08','2027-12-25'
+];
+const MIN_ENTRE_SEMANA = 16; // más de 15 personas (sin contar bebés)
+const CUPO_FIN_SEMANA = 25;  // cupo máximo por día (sin contar bebés)
 const WHATSAPP = '573186506095';
 (function(){
 const $=id=>document.getElementById(id);
 const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const PLANES={t:{n:'Plan Turístico - Un Viaje a la Miel (Apicultor por un día)',p:{ad:55000,jo:55000,ni:50000,be:0}},e:{n:'Plan Estudiantil - Presencial y/o en tu Colegio'},m:{n:'Plan Empresarial - Presencial y/o en tu Empresa'}};
-const TIPOS=[['ad','Adultos','desde 15 años'],['jo','Jóvenes','12 a 14 años'],['ni','Niños','2 a 11 años'],['be','Bebés','menores de 2 años']];
+const PLANES={t:{n:'Plan Turístico - Un Viaje a la Miel (Apicultor por un día)',p:{ad:55000,ni:50000,be:0}},e:{n:'Plan Estudiantil - Presencial y/o en tu Colegio'},m:{n:'Plan Empresarial - Presencial y/o en tu Empresa'}};
+const TIPOS=[['ad','Adultos','desde 15 años'],['ni','Niños','2 a 14 años'],['be','Bebés','menores de 2 años, gratis']];
 const cnt={};TIPOS.forEach(t=>cnt[t[0]]={h:0,m:0});cnt.ad.h=1;
 const hoy=new Date();hoy.setHours(0,0,0,0);
 const min=new Date(hoy);min.setDate(min.getDate()+ANTICIPACION_DIAS);
@@ -24,22 +31,28 @@ function cal(){
  const n=new Date(vista.getFullYear(),vista.getMonth()+1,0).getDate();
  for(let d=1;d<=n;d++){const f=new Date(vista.getFullYear(),vista.getMonth(),d),b=document.createElement('button');b.type='button';b.textContent=d;
   let est;if(f<min){est='off';b.disabled=true;b.setAttribute('aria-label',larga(f)+', fuera de plazo');}
-  else if(NO_DISPONIBLES.includes(iso(f))){est='no';b.setAttribute('aria-disabled','true');b.setAttribute('aria-label',larga(f)+', no disponible');}
-  else{est='ok';b.setAttribute('aria-label',larga(f)+', disponible');b.onclick=()=>paso2(f);}
+  else if(NO_DISPONIBLES.includes(iso(f))||(f.getDay()===1&&!FESTIVOS.includes(iso(f)))){est='no';b.disabled=true;b.setAttribute('aria-label',larga(f)+', no disponible');}
+  else if(f.getDay()===0||f.getDay()===6||FESTIVOS.includes(iso(f))){est='fs';b.setAttribute('aria-label',larga(f)+', fin de semana o festivo, público general');b.onclick=()=>paso2(f);}
+  else{est='ok';b.setAttribute('aria-label',larga(f)+', martes a viernes, grupos privados');b.onclick=()=>paso2(f);}
   b.className=est+(f.getTime()===hoy.getTime()?' hoy':'');if(f.getTime()===hoy.getTime())b.setAttribute('aria-current','date');g.appendChild(b);}
 }
 $('cal-prev').onclick=()=>{vista.setMonth(vista.getMonth()-1);cal();};
 $('cal-next').onclick=()=>{vista.setMonth(vista.getMonth()+1);cal();};
-function paso2(f){sel=f;$('rsv-fecha').textContent=larga(f);$('rsv-s1').hidden=true;$('rsv-s2').hidden=false;tot();$('rsv-plan').focus();}
+function paso2(f){sel=f;$('rsv-fecha').textContent=larga(f)+(FESTIVOS.includes(iso(f))?' (festivo)':'');$('rsv-s1').hidden=true;$('rsv-s2').hidden=false;tot();$('rsv-plan').focus();}
 $('rsv-back').onclick=()=>{$('rsv-s2').hidden=true;$('rsv-s1').hidden=false;$('rsv-res').hidden=true;};
 const tb=$('rsv-cnt');
 TIPOS.forEach(([k,n,e])=>{const tr=document.createElement('tr');tr.innerHTML='<th scope="row">'+n+'<small>'+e+'</small></th>'+['h','m'].map(s=>'<td><span class="cnt"><button type="button" data-k="'+k+'" data-s="'+s+'" data-d="-1" aria-label="Quitar '+n+' '+(s=='h'?'hombres':'mujeres')+'">−</button><output id="c-'+k+s+'">'+cnt[k][s]+'</output><button type="button" data-k="'+k+'" data-s="'+s+'" data-d="1" aria-label="Agregar '+n+' '+(s=='h'?'hombres':'mujeres')+'">+</button></span></td>').join('');tb.appendChild(tr);});
 tb.onclick=e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.k,s=b.dataset.s;cnt[k][s]=Math.max(0,cnt[k][s]+ +b.dataset.d);$('c-'+k+s).textContent=cnt[k][s];tot();};
 $('rsv-plan').onchange=tot;
 const T=k=>cnt[k].h+cnt[k].m;
-function err(){const a=T('ad');if(a<1)return 'Debe asistir al menos 1 adulto.';if(T('be')>a)return 'Máximo 1 bebé por adulto.';return '';}
-function tot(){const e=err();$('rsv-err').textContent=e;const pl=PLANES[$('rsv-plan').value];let h;
- if(pl.p){let t=0;TIPOS.forEach(([k])=>t+=T(k)*pl.p[k]);h='Total estimado: <b>'+cop(t)+'</b><br>Abono para confirmar (40%): <b>'+cop(Math.round(t*.4))+'</b><br><small>Adultos y jóvenes $55.000 · Niños $50.000 · Bebés sin costo (por confirmar)</small>';pl.t=t;}
+const esFS=()=>sel&&(sel.getDay()===0||sel.getDay()===6||FESTIVOS.includes(iso(sel)));
+const PER=()=>T('ad')+T('ni');
+function err(){const a=T('ad');if(a<1)return 'Debe asistir al menos 1 adulto.';if(T('be')>a)return 'Máximo 1 bebé por adulto.';
+ if(esFS()&&PER()>CUPO_FIN_SEMANA)return 'Cupo máximo '+CUPO_FIN_SEMANA+' personas por día (sin contar bebés). Para grupos más grandes elige un día de martes a viernes.';
+ if(!esFS()&&PER()<MIN_ENTRE_SEMANA)return 'De martes a viernes atendemos grupos privados de más de 15 personas: lleva '+PER()+', faltan '+(MIN_ENTRE_SEMANA-PER())+' (sin contar bebés). Para grupos pequeños elige un sábado, domingo o festivo.';
+ return '';}
+function tot(){$('rsv-regla').textContent=esFS()?'Fin de semana o festivo: público general. Cupo máximo '+CUPO_FIN_SEMANA+' personas por día (sin contar bebés), sujeto a disponibilidad.':'Martes a viernes: grupos privados de mínimo '+MIN_ENTRE_SEMANA+' personas (sin contar bebés).';const e=err();$('rsv-err').textContent=e;const pl=PLANES[$('rsv-plan').value];let h;
+ if(pl.p){let t=0;TIPOS.forEach(([k])=>t+=T(k)*pl.p[k]);h='Total estimado: <b>'+cop(t)+'</b><br>Abono para confirmar (40%): <b>'+cop(Math.round(t*.4))+'</b><br><small>Adultos $55.000 · Niños $50.000 · Bebés gratis</small>';pl.t=t;}
  else h='Precio: <b>a cotizar</b>. Te enviaremos la cotización por WhatsApp; el abono es del 40%.';
  $('rsv-tot').innerHTML=h;}
 function resumen(){const pl=PLANES[$('rsv-plan').value];const L=['Hola, quiero reservar una visita a Finca Blemish.','Fecha: '+larga(sel),'Plan: '+pl.n,'Visitantes:'];
