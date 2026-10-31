@@ -136,3 +136,4 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .rsv-err2:empty{display:none}.rsv-err2{background:#fdecec;border:2px solid #D64545;color:#B02A2A;font-weight:700;border-radius:8px;padding:.6rem .8rem;margin:.6rem 0 0}#rsv-s2 .btn.wa{opacity:1;cursor:pointer}
 .rsv-err2,#rsv-err,.rsv-note{text-align:left}
 #rsv-s2 select#rsv-plan{font-size:1.25rem;font-weight:700;color:var(--g)}.rsv-plan-sum{font-size:1.25rem}.rsv-plan-sum b{font-weight:700}
+.cal-g button{position:relative}.cal-g .poco::after,.d-poco{content:"";position:absolute;top:2px;right:2px;width:.55rem;height:.55rem;border-radius:50%;background:var(--h);border:1px solid #fff}.d-poco{position:static;display:inline-block}

@@ -8,7 +8,8 @@ const FESTIVOS = [
  '2026-01-01','2026-01-12','2026-03-23','2026-04-02','2026-04-03','2026-05-01','2026-05-18','2026-06-08','2026-06-15','2026-06-29','2026-07-20','2026-08-07','2026-08-17','2026-10-12','2026-11-02','2026-11-16','2026-12-08','2026-12-25',
  '2027-01-01','2027-01-11','2027-03-22','2027-03-25','2027-03-26','2027-05-01','2027-05-10','2027-05-31','2027-06-07','2027-07-05','2027-07-20','2027-08-07','2027-08-16','2027-10-18','2027-11-01','2027-11-15','2027-12-08','2027-12-25'
 ];
-const MIN_ENTRE_SEMANA = 16; // más de 15 personas (sin contar bebés)
+const MIN_ENTRE_SEMANA = 16; // grupos privados (Estudiantil/Empresarial) entre semana: más de 15 personas
+const CUPO_ENTRE_SEMANA = 16; // cupo por día martes a viernes (sin contar bebés)
 const CUPO_FIN_SEMANA = 25;  // cupo máximo por día (sin contar bebés)
 const WHATSAPP = '573186506095';
 /* URL de la aplicación web de Google Apps Script que guarda cada solicitud en la hoja de Drive. Vacío = no se envía. */
@@ -25,6 +26,11 @@ let vista=new Date(hoy.getFullYear(),hoy.getMonth(),1),sel=null;
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const larga=d=>d.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 const cop=n=>'$'+n.toLocaleString('es-CO');
+let OCUPADO={};
+const finde=f=>f.getDay()===0||f.getDay()===6||FESTIVOS.includes(iso(f));
+const cupo=f=>finde(f)?CUPO_FIN_SEMANA:CUPO_ENTRE_SEMANA;
+const libres=f=>Math.max(0,cupo(f)-(OCUPADO[iso(f)]||0));
+function cargarCupos(){if(!APPS_SCRIPT_URL)return;try{fetch(APPS_SCRIPT_URL+'?t='+Date.now()).then(r=>r.json()).then(d=>{if(d&&typeof d==='object'){OCUPADO=d;cal();if(sel&&!$('rsv-s2').hidden)tot();}}).catch(()=>{});}catch(_){}}
 function cal(){
  $('cal-mes').textContent=MESES[vista.getMonth()]+' '+vista.getFullYear();
  $('cal-prev').disabled=vista<=new Date(hoy.getFullYear(),hoy.getMonth(),1);
@@ -34,8 +40,9 @@ function cal(){
  for(let d=1;d<=n;d++){const f=new Date(vista.getFullYear(),vista.getMonth(),d),b=document.createElement('button');b.type='button';b.textContent=d;
   let est;if(f<min){est='off';b.disabled=true;b.setAttribute('aria-label',larga(f)+', fuera de plazo');}
   else if(NO_DISPONIBLES.includes(iso(f))||(f.getDay()===1&&!FESTIVOS.includes(iso(f)))){est='no';b.disabled=true;b.setAttribute('aria-label',larga(f)+', no disponible');}
-  else if(f.getDay()===0||f.getDay()===6||FESTIVOS.includes(iso(f))){est='fs';b.setAttribute('aria-label',larga(f)+', fin de semana o festivo, público general');b.onclick=()=>paso2(f);}
-  else{est='ok';b.setAttribute('aria-label',larga(f)+', martes a viernes, grupos privados');b.onclick=()=>paso2(f);}
+  else if(libres(f)===0){est='no lleno';b.disabled=true;b.setAttribute('aria-label',larga(f)+', lleno');b.title='Lleno';}
+  else{const q=libres(f),poco=q<cupo(f)&&q<=Math.ceil(cupo(f)/3);est=finde(f)?'fs':'ok';
+   b.setAttribute('aria-label',larga(f)+(finde(f)?', fin de semana o festivo, público general':', martes a viernes')+', quedan '+q+' cupos');b.title='Quedan '+q+' cupos';if(poco)est+=' poco';b.onclick=()=>paso2(f);}
   b.className=est+(f.getTime()===hoy.getTime()?' hoy':'');if(f.getTime()===hoy.getTime())b.setAttribute('aria-current','date');g.appendChild(b);}
 }
 $('cal-prev').onclick=()=>{vista.setMonth(vista.getMonth()-1);cal();};
@@ -51,11 +58,15 @@ $('rsv-plan').onchange=()=>{entUI();tot();};entUI();
 const T=k=>cnt[k].h+cnt[k].m;
 const esFS=()=>sel&&(sel.getDay()===0||sel.getDay()===6||FESTIVOS.includes(iso(sel)));
 const PER=()=>T('ad')+T('ni');
+const privado=()=>!esFS()&&$('rsv-plan').value!=='t';
 function err(){const a=T('ad');if(a<1)return 'Debe asistir al menos 1 adulto.';if(T('be')>a)return 'Máximo 1 bebé por adulto.';
- if(esFS()&&PER()>CUPO_FIN_SEMANA)return 'Cupo máximo '+CUPO_FIN_SEMANA+' personas por día (sin contar bebés). Para grupos más grandes elige un día de martes a viernes.';
- if(!esFS()&&PER()<MIN_ENTRE_SEMANA)return 'De martes a viernes atendemos grupos privados de más de 15 personas: lleva '+PER()+', faltan '+(MIN_ENTRE_SEMANA-PER())+' (sin contar bebés). Para grupos pequeños elige un sábado, domingo o festivo.';
+ const q=libres(sel);
+ if(privado()){if(q<cupo(sel))return 'Este día ya tiene otras reservas. Los grupos privados (Plan Estudiantil / Empresarial) de martes a viernes toman el día completo: elige otro día.';
+  if(PER()<MIN_ENTRE_SEMANA)return 'De martes a viernes, el Plan Estudiantil y el Plan Empresarial son para grupos privados de más de 15 personas: lleva '+PER()+', faltan '+(MIN_ENTRE_SEMANA-PER())+' (sin contar bebés). Para grupos pequeños elige el Plan Turístico o un fin de semana.';
+  return '';}
+ if(PER()>q)return 'Solo quedan '+q+' cupos este día (sin contar bebés) y tu solicitud tiene '+PER()+' personas. Reduce el grupo o elige otro día.';
  return '';}
-function tot(){if($('rsv-err2'))$('rsv-err2').textContent='';$('rsv-regla').textContent=esFS()?'Fin de semana o festivo: público general. Cupo máximo '+CUPO_FIN_SEMANA+' personas por día (sin contar bebés), sujeto a disponibilidad.':'Martes a viernes: grupos privados de mínimo '+MIN_ENTRE_SEMANA+' personas (sin contar bebés).';const e=err();$('rsv-err').textContent=e;const pl=PLANES[$('rsv-plan').value];let h;
+function tot(){if($('rsv-err2'))$('rsv-err2').textContent='';$('rsv-regla').textContent='Cupos disponibles este día: '+libres(sel)+' de '+cupo(sel)+' (sin contar bebés). '+(privado()?'Grupo privado: más de 15 personas, toma el día completo.':(esFS()?'Fin de semana o festivo: público general.':'Martes a viernes: varias reservas hasta completar el cupo.'));const e=err();$('rsv-err').textContent=e;const pl=PLANES[$('rsv-plan').value];let h;
  if(pl.p){let t=0;TIPOS.forEach(([k])=>t+=T(k)*pl.p[k]);h='Total estimado: <b>'+cop(t)+'</b><br>Abono para confirmar (40%): <b>'+cop(Math.round(t*.4))+'</b><br><small>Adultos $55.000 · Niños $50.000 · Bebés gratis</small>';pl.t=t;}
  else h='Precio: <b>a cotizar</b>. Te enviaremos la cotización por WhatsApp; el abono es del 40%.';
  $('rsv-tot').innerHTML=h;}
@@ -84,5 +95,5 @@ $('rsv-s2').onsubmit=ev=>{ev.preventDefault();let e=err();
  window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(L.join('\n')),'_blank','noopener');};
 ['rsv-plan','rsv-ent','rsv-nom','rsv-tel','rsv-mail'].forEach(i=>$(i).addEventListener('input',()=>{$('rsv-res').hidden=true;}));
 tb.addEventListener('click',()=>{$('rsv-res').hidden=true;});
-cal();
+cal();cargarCupos();
 })();

@@ -4,8 +4,43 @@
  * 1) Ejecutar una vez la función setupFinanzas (menú superior, botón ▶ Ejecutar).
  * 2) Implementar > Gestionar implementaciones > lápiz > Versión: Nueva versión > Implementar (la URL /exec no cambia).
  * Si ya corriste setupFinanzas antes, basta ejecutar setupEntidad (crea AE 'Institución / Empresa').
+ * Cupos: doGet devuelve el acumulado de personas por día. Marca 'Cancelada' en la columna Estado (R) para liberar cupos.
  * Columnas A-Q y AE las escribe el sitio web; R-AD son de llenado manual (AA y AB se calculan solas).
  */
+const TZ = 'America/Bogota';
+const CUPO_SEMANA = 16, CUPO_FINDE = 25;   // personas por día, sin contar bebés
+// Festivos de Colombia 2026-2027 (igual que reserva.js)
+const FESTIVOS = ['2026-01-01','2026-01-12','2026-03-23','2026-04-02','2026-04-03','2026-05-01','2026-05-18','2026-06-08','2026-06-15','2026-06-29','2026-07-20','2026-08-07','2026-08-17','2026-10-12','2026-11-02','2026-11-16','2026-12-08','2026-12-25',
+ '2027-01-01','2027-01-11','2027-03-22','2027-03-25','2027-03-26','2027-05-01','2027-05-10','2027-05-31','2027-06-07','2027-07-05','2027-07-20','2027-08-07','2027-08-16','2027-10-18','2027-11-01','2027-11-15','2027-12-08','2027-12-25'];
+const esFinde = f => { const w = new Date(f + 'T12:00:00Z').getUTCDay(); return w === 0 || w === 6 || FESTIVOS.includes(f); };
+const cupoDia = f => esFinde(f) ? CUPO_FINDE : CUPO_SEMANA;
+const esPrivado = plan => /Estudiantil|Empresarial/.test(String(plan));
+const fmtFecha = v => v instanceof Date ? Utilities.formatDate(v, TZ, 'yyyy-MM-dd') : String(v).slice(0, 10);
+
+/** Acumulado por día: {fecha: personas} sin bebés, sin canceladas, desde hoy. Un grupo privado entre semana ocupa el día completo. */
+function acumulado_() {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  const last = sh.getLastRow(); const out = {};
+  if (last < 2) return out;
+  const v = sh.getRange(2, 1, last - 1, 18).getValues();
+  const hoy = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd');
+  v.forEach(r => {
+    if (r[0] === '' || String(r[17]).trim().toLowerCase() === 'cancelada') return;
+    const f = fmtFecha(r[1]); if (!/^\d{4}-\d{2}-\d{2}$/.test(f) || f < hoy) return;
+    let n = (Number(r[10]) || 0) - (Number(r[8]) || 0) - (Number(r[9]) || 0);  // K - bebés (I, J)
+    if (!esFinde(f) && esPrivado(r[3])) n = cupoDia(f);
+    out[f] = Math.min(cupoDia(f), (out[f] || 0) + Math.max(0, n));
+  });
+  return out;
+}
+
+function doGet(e) {
+  const json = JSON.stringify(acumulado_());
+  const cb = e && e.parameter && e.parameter.callback;
+  if (cb && /^[A-Za-z_$][\w$]*$/.test(cb)) return ContentService.createTextOutput(cb + '(' + json + ')').setMimeType(ContentService.MimeType.JAVASCRIPT);
+  return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
+}
+
 const COLS = ['registro','fecha','tipoDia','plan','adH','adM','niH','niM','beH','beM','personas','total','abono','nombre','telefono','correo','acepto'];
 
 function doPost(e) {
@@ -14,7 +49,12 @@ function doPost(e) {
     const d = JSON.parse(e.postData.contents);
     const sh = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
     const clean = v => { v = (v === undefined || v === null) ? '' : String(v).slice(0, 300); return /^[=+\-@]/.test(v) ? "'" + v : v; };
-    d.registro = Utilities.formatDate(new Date(), 'America/Bogota', 'yyyy-MM-dd HH:mm:ss');
+    d.registro = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm:ss');
+    // Control de cupo antes de escribir
+    const f = String(d.fecha || '').slice(0, 10), ya = acumulado_()[f] || 0;
+    const pide = (Number(d.adH)||0) + (Number(d.adM)||0) + (Number(d.niH)||0) + (Number(d.niM)||0);
+    const privado = !esFinde(f) && esPrivado(d.plan);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(f) && (privado ? ya > 0 : ya + pide > cupoDia(f))) return ContentService.createTextOutput('lleno');
     // Siguiente fila libre según la columna A (no usa appendRow, para no chocar con las fórmulas de AA/AB).
     const colA = sh.getRange('A:A').getValues();
     let r = colA.length; while (r > 1 && colA[r - 1][0] === '') r--;
