@@ -3,7 +3,8 @@
  * Hoja: "Blemish - Solicitudes de reserva". Pegar en Extensiones > Apps Script (reemplaza todo el código).
  * 1) Ejecutar una vez la función setupFinanzas (menú superior, botón ▶ Ejecutar).
  * 2) Implementar > Gestionar implementaciones > lápiz > Versión: Nueva versión > Implementar (la URL /exec no cambia).
- * Columnas A-Q las escribe el sitio web; R-AD son de llenado manual (AA y AB se calculan solas).
+ * Si ya corriste setupFinanzas antes, basta ejecutar setupEntidad (crea AE 'Institución / Empresa').
+ * Columnas A-Q y AE las escribe el sitio web; R-AD son de llenado manual (AA y AB se calculan solas).
  */
 const COLS = ['registro','fecha','tipoDia','plan','adH','adM','niH','niM','beH','beM','personas','total','abono','nombre','telefono','correo','acepto'];
 
@@ -20,8 +21,16 @@ function doPost(e) {
     const row = r + 1;
     sh.getRange(row, 1, 1, COLS.length).setValues([COLS.map(k => clean(d[k]))]);
     sh.getRange(row, 18).setValue('Solicitud'); // R Estado inicial
+    sh.getRange(row, 31).setValue(clean(d.entidad)); // AE Institución / Empresa
     return ContentService.createTextOutput('ok');
   } finally { lock.releaseLock(); }
+}
+
+function setupEntidad() {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  if (sh.getMaxColumns() < 31) sh.insertColumnsAfter(sh.getMaxColumns(), 31 - sh.getMaxColumns());
+  sh.getRange(1, 31).setValue('Institución / Empresa').setFontWeight('bold').setBackground('#013025').setFontColor('#F5F1DF').setWrap(true);
+  sh.setColumnWidth(31, 220);
 }
 
 function setupFinanzas() {
@@ -79,5 +88,6 @@ function setupFinanzas() {
   rs.getRange('D2:E200').setNumberFormat('$#,##0');
   rs.getRange('A1:E1').setFontWeight('bold').setBackground('#013025').setFontColor('#F5F1DF');
   rs.setFrozenRows(1); rs.setColumnWidths(1, 5, 140);
+  setupEntidad();
   rs.getRange('G1').setValue('Resumen por mes de la visita (sin canceladas). Se actualiza solo.');
 }
