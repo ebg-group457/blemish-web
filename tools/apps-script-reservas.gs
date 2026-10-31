@@ -3,7 +3,7 @@
  * Hoja: "Blemish - Solicitudes de reserva". Pegar en Extensiones > Apps Script (reemplaza todo el código).
  * 1) Ejecutar una vez la función setupFinanzas (menú superior, botón ▶ Ejecutar).
  * 2) Implementar > Gestionar implementaciones > lápiz > Versión: Nueva versión > Implementar (la URL /exec no cambia).
- * Si ya corriste setupFinanzas antes, basta ejecutar setupEntidad (crea AE 'Institución / Empresa').
+ * Si ya corriste setupFinanzas antes, basta ejecutar setupColumnas (crea AE 'Institución / Empresa' y AF 'Dirección (charla en colegio)').
  * Cupos: doGet devuelve el acumulado de personas por día. Marca 'Cancelada' en la columna Estado (R) para liberar cupos.
  * Columnas A-Q y AE las escribe el sitio web; R-AD son de llenado manual (AA y AB se calculan solas).
  */
@@ -26,6 +26,7 @@ function acumulado_() {
   const hoy = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd');
   v.forEach(r => {
     if (r[0] === '' || String(r[17]).trim().toLowerCase() === 'cancelada') return;
+    if (/Charla en colegio/i.test(String(r[3]))) return; // la charla en el colegio no usa cupos de la finca
     const f = fmtFecha(r[1]); if (!/^\d{4}-\d{2}-\d{2}$/.test(f) || f < hoy) return;
     let n = (Number(r[10]) || 0) - (Number(r[8]) || 0) - (Number(r[9]) || 0);  // K - bebés (I, J)
     if (!esFinde(f) && esPrivado(r[3])) n = cupoDia(f);
@@ -51,10 +52,10 @@ function doPost(e) {
     const clean = v => { v = (v === undefined || v === null) ? '' : String(v).slice(0, 300); return /^[=+\-@]/.test(v) ? "'" + v : v; };
     d.registro = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm:ss');
     // Control de cupo antes de escribir
-    const f = String(d.fecha || '').slice(0, 10), ya = acumulado_()[f] || 0;
+    const f = String(d.fecha || '').slice(0, 10), ya = /Charla en colegio/i.test(String(d.plan)) ? -1 : (acumulado_()[f] || 0);
     const pide = (Number(d.adH)||0) + (Number(d.adM)||0) + (Number(d.niH)||0) + (Number(d.niM)||0);
     const privado = !esFinde(f) && esPrivado(d.plan);
-    if (/^\d{4}-\d{2}-\d{2}$/.test(f) && (privado ? ya > 0 : ya + pide > cupoDia(f))) return ContentService.createTextOutput('lleno');
+    if (ya >= 0 && /^\d{4}-\d{2}-\d{2}$/.test(f) && (privado ? ya > 0 : ya + pide > cupoDia(f))) return ContentService.createTextOutput('lleno');
     // Siguiente fila libre según la columna A (no usa appendRow, para no chocar con las fórmulas de AA/AB).
     const colA = sh.getRange('A:A').getValues();
     let r = colA.length; while (r > 1 && colA[r - 1][0] === '') r--;
@@ -62,15 +63,19 @@ function doPost(e) {
     sh.getRange(row, 1, 1, COLS.length).setValues([COLS.map(k => clean(d[k]))]);
     sh.getRange(row, 18).setValue('Solicitud'); // R Estado inicial
     sh.getRange(row, 31).setValue(clean(d.entidad)); // AE Institución / Empresa
+    sh.getRange(row, 32).setValue(clean(d.direccion)); // AF Dirección (charla en colegio)
     return ContentService.createTextOutput('ok');
   } finally { lock.releaseLock(); }
 }
 
-function setupEntidad() {
+function setupColumnas() {
   const sh = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-  if (sh.getMaxColumns() < 31) sh.insertColumnsAfter(sh.getMaxColumns(), 31 - sh.getMaxColumns());
-  sh.getRange(1, 31).setValue('Institución / Empresa').setFontWeight('bold').setBackground('#013025').setFontColor('#F5F1DF').setWrap(true);
-  sh.setColumnWidth(31, 220);
+  if (sh.getMaxColumns() < 32) sh.insertColumnsAfter(sh.getMaxColumns(), 32 - sh.getMaxColumns());
+  sh.getRange(1, 31, 1, 2).setValues([['Institución / Empresa', 'Dirección (charla en colegio)']])
+    .setFontWeight('bold').setBackground('#013025').setFontColor('#F5F1DF').setWrap(true);
+  sh.setColumnWidth(31, 220); sh.setColumnWidth(32, 260);
+}
+function setupEntidad() { setupColumnas();
 }
 
 function setupFinanzas() {
@@ -128,6 +133,6 @@ function setupFinanzas() {
   rs.getRange('D2:E200').setNumberFormat('$#,##0');
   rs.getRange('A1:E1').setFontWeight('bold').setBackground('#013025').setFontColor('#F5F1DF');
   rs.setFrozenRows(1); rs.setColumnWidths(1, 5, 140);
-  setupEntidad();
+  setupColumnas();
   rs.getRange('G1').setValue('Resumen por mes de la visita (sin canceladas). Se actualiza solo.');
 }

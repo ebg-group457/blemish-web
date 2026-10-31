@@ -54,42 +54,50 @@ TIPOS.forEach(([k,n,e])=>{const tr=document.createElement('tr');tr.innerHTML='<t
 tb.onclick=e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.k,s=b.dataset.s;cnt[k][s]=Math.max(0,cnt[k][s]+ +b.dataset.d);$('c-'+k+s).textContent=cnt[k][s];tot();};
 const ENT={e:['Institución','Nombre de la institución educativa (colegio, universidad, instituto…)','Escribe el nombre de la institución educativa.'],m:['Empresa','Nombre de la empresa','Escribe el nombre de la empresa.']};
 function entUI(){const x=ENT[$('rsv-plan').value];$('rsv-ent-w').hidden=!x;$('rsv-ent').required=!!x;if(x)$('rsv-ent-l').textContent=x[1];}
-$('rsv-plan').onchange=()=>{entUI();filas();tot();};entUI();
+const CH_BASE=750000,CH_IVA=Math.round(CH_BASE*.19),CH_TOT=CH_BASE+CH_IVA,CH_MAX=35;
+const charla=()=>$('rsv-plan').value==='e'&&$('rsv-mod').value==='colegio';
+function modUI(){$('rsv-mod-w').hidden=$('rsv-plan').value!=='e';$('rsv-dir-w').hidden=!charla();$('rsv-dir').required=charla();}
+$('rsv-plan').onchange=()=>{entUI();modUI();filas();tot();};entUI();
+$('rsv-mod').onchange=()=>{modUI();filas();tot();$('rsv-res').hidden=true;};
 const T=k=>cnt[k].h+cnt[k].m;
 const est=()=>$('rsv-plan').value==='e';
 function filas(){const e=est();const rows=$('rsv-cnt').rows;
- rows[0].cells[0].innerHTML=e?'Profesores<small>gratis</small>':'Adultos<small>desde 15 años</small>';
- rows[1].cells[0].innerHTML=e?'Estudiantes<small>$45.000 c/u</small>':'Niños<small>2 a 14 años</small>';
+ rows[0].cells[0].innerHTML=e?(charla()?'Profesores<small>opcional</small>':'Profesores<small>gratis</small>'):'Adultos<small>desde 15 años</small>';
+ rows[1].cells[0].innerHTML=e?(charla()?'Estudiantes<small>hasta 35</small>':'Estudiantes<small>$45.000 c/u</small>'):'Niños<small>2 a 14 años</small>';
  rows[2].hidden=e;if(e&&T('be')){cnt.be.h=cnt.be.m=0;$('c-beh').textContent=0;$('c-bem').textContent=0;}}
 const esFS=()=>sel&&(sel.getDay()===0||sel.getDay()===6||FESTIVOS.includes(iso(sel)));
 const PER=()=>T('ad')+T('ni');
 const privado=()=>!esFS()&&$('rsv-plan').value!=='t';
-function err(){const a=T('ad');if(est()){if(T('ni')<1)return 'Agrega al menos 1 estudiante.';const req=Math.max(1,Math.ceil(T('ni')/6));if(a<req)return 'Requisito: 1 profesor acompañante por cada 6 estudiantes. Para '+T('ni')+' estudiantes se necesitan al menos '+req+' profesores (llevas '+a+').';}if(a<1)return 'Debe asistir al menos 1 adulto.';if(T('be')>a)return 'Máximo 1 bebé por adulto.';
+function err(){const a=T('ad');if(charla()){if(T('ni')<1)return 'Agrega al menos 1 estudiante.';if(T('ni')>CH_MAX)return 'La charla en tu colegio es para máximo '+CH_MAX+' estudiantes (llevas '+T('ni')+'). Para más estudiantes escríbenos por WhatsApp.';
+  if(sel.getDay()===0||sel.getDay()===1||FESTIVOS.includes(iso(sel)))return 'La charla en tu colegio se programa de martes a sábado (no domingos, lunes ni festivos). Elige otra fecha.';return '';}if(est()){if(T('ni')<1)return 'Agrega al menos 1 estudiante.';const req=Math.max(1,Math.ceil(T('ni')/6));if(a<req)return 'Requisito: 1 profesor acompañante por cada 6 estudiantes. Para '+T('ni')+' estudiantes se necesitan al menos '+req+' profesores (llevas '+a+').';}if(a<1)return 'Debe asistir al menos 1 adulto.';if(T('be')>a)return 'Máximo 1 bebé por adulto.';
  const q=libres(sel);
  if(privado()){if(q<cupo(sel))return 'Este día ya tiene otras reservas. Los grupos privados (Plan Estudiantil / Empresarial) de martes a viernes toman el día completo: elige otro día.';
   if(PER()<MIN_ENTRE_SEMANA)return 'De martes a viernes, el Plan Estudiantil y el Plan Empresarial son para grupos privados de más de 15 personas: lleva '+PER()+', faltan '+(MIN_ENTRE_SEMANA-PER())+' (sin contar bebés). Para grupos pequeños elige el Plan Turístico o un fin de semana.';
   return '';}
  if(PER()>q)return 'Solo quedan '+q+' cupos este día (sin contar bebés) y tu solicitud tiene '+PER()+' personas. Reduce el grupo o elige otro día.';
  return '';}
-function tot(){if($('rsv-err2'))$('rsv-err2').textContent='';$('rsv-regla').textContent='Cupos disponibles este día: '+libres(sel)+' de '+cupo(sel)+' (sin contar bebés). '+(privado()?'Grupo privado: más de 15 personas, toma el día completo.':(esFS()?'Fin de semana o festivo: público general.':'Martes a viernes: varias reservas hasta completar el cupo.'));const e=err();$('rsv-err').textContent=e;const pl=PLANES[$('rsv-plan').value];let h;
- if(pl.p){let t=0;TIPOS.forEach(([k])=>t+=T(k)*pl.p[k]);h='Total estimado: <b>'+cop(t)+'</b><br>Abono para confirmar (40%): <b>'+cop(Math.round(t*.4))+'</b>'+(est()?'<br><small>Estudiantes $45.000 · Profesores gratis</small>':'<br><small>Adultos $55.000 · Niños $50.000 · Bebés gratis</small>');pl.t=t;}
+function tot(){if($('rsv-err2'))$('rsv-err2').textContent='';$('rsv-regla').textContent=charla()?'Charla en tu colegio: no usa cupos de la finca. Martes a sábado, hasta '+CH_MAX+' estudiantes.':'Cupos disponibles este día: '+libres(sel)+' de '+cupo(sel)+' (sin contar bebés). '+(privado()?'Grupo privado: más de 15 personas, toma el día completo.':(esFS()?'Fin de semana o festivo: público general.':'Martes a viernes: varias reservas hasta completar el cupo.'));const e=err();$('rsv-err').textContent=e;const pl=PLANES[$('rsv-plan').value];let h;
+ if(charla()){h='Valor: <b>'+cop(CH_BASE)+'</b> + IVA 19% ('+cop(CH_IVA)+') = <b>'+cop(CH_TOT)+'</b><br>Abono para confirmar (40%): <b>'+cop(Math.round(CH_TOT*.4))+'</b><br><small>Hasta '+CH_MAX+' estudiantes</small>';pl.t=CH_TOT;}
+ else if(pl.p){let t=0;TIPOS.forEach(([k])=>t+=T(k)*pl.p[k]);h='Total estimado: <b>'+cop(t)+'</b><br>Abono para confirmar (40%): <b>'+cop(Math.round(t*.4))+'</b>'+(est()?'<br><small>Estudiantes $45.000 · Profesores gratis</small>':'<br><small>Adultos $55.000 · Niños $50.000 · Bebés gratis</small>');pl.t=t;}
  else h='Precio: <b>a cotizar</b>. Te enviaremos la cotización por WhatsApp; el abono es del 40%.';
  $('rsv-tot').innerHTML=h;}
 function resumen(){const k=$('rsv-plan').value,pl=PLANES[k];const CORTO={t:'Un Viaje a la Miel',e:'Plan Estudiantil',m:'Plan Empresarial'};
  const sx=x=>'('+cnt[x].h+' H, '+cnt[x].m+' M)';
- const L=['Hola, quiero reservar una visita a Finca Blemish'+(k==='t'?' para ser Apicultor por un día':''),'','*Fecha:* '+larga(sel)+(FESTIVOS.includes(iso(sel))?' (festivo)':''),'','*Plan: '+CORTO[k]+'*','','*Participantes:*'];
- if(k==='e'){if(T('ni'))L.push('• Estudiantes: '+T('ni')+' '+sx('ni')+' x '+cop(45000)+' = '+cop(T('ni')*45000));if(T('ad'))L.push('• Profesores: '+T('ad')+' '+sx('ad')+' (gratis)');}
+ const L=[(charla()?'Hola, quiero agendar la charla de Finca Blemish en nuestro colegio':'Hola, quiero reservar una visita a Finca Blemish'+(k==='t'?' para ser Apicultor por un día':'')),'','*Fecha:* '+larga(sel)+(FESTIVOS.includes(iso(sel))?' (festivo)':''),'','*Plan: '+CORTO[k]+(charla()?' — Charla en tu colegio':'')+'*','','*Participantes:*'];
+ if(charla()){L.push('• Estudiantes: '+T('ni')+' (hasta '+CH_MAX+')');if(T('ad'))L.push('• Profesores: '+T('ad'));}
+ else if(k==='e'){if(T('ni'))L.push('• Estudiantes: '+T('ni')+' '+sx('ni')+' x '+cop(45000)+' = '+cop(T('ni')*45000));if(T('ad'))L.push('• Profesores: '+T('ad')+' '+sx('ad')+' (gratis)');}
  else{ if(T('ad'))L.push('• Adultos: '+T('ad')+' '+sx('ad')+(pl.p?' x '+cop(pl.p.ad)+' = '+cop(T('ad')*pl.p.ad):''));
  if(T('ni'))L.push('• Niños: '+T('ni')+' '+sx('ni')+(pl.p?' x '+cop(pl.p.ni)+' = '+cop(T('ni')*pl.p.ni):''));
  if(T('be'))L.push('• Bebés: '+T('be')+' '+sx('be')+' (gratis)');}
  L.push('• Total personas: '+(PER()+T('be')),'');
- L.push(pl.p?'*Total estimado:* '+cop(pl.t)+' · *Abono 40%:* '+cop(Math.round(pl.t*.4)):'*Total estimado:* a cotizar · *Abono 40%:* a cotizar');
- const X=ENT[k];L.push('');if(X)L.push('*'+X[0]+':* '+$('rsv-ent').value.trim());L.push('*Nombre:* '+$('rsv-nom').value.trim(),'*Teléfono:* '+$('rsv-tel').value.trim(),'*Correo:* '+$('rsv-mail').value.trim(),'✅ Acepto la Política de Tratamiento de Datos Personales.','','*NOTA:* La fecha escogida está sujeta a acomodación. *NOS COMUNICAREMOS PARA CONFIRMACIÓN*');return L;}
+ L.push(charla()?'*Valor:* '+cop(CH_BASE)+' + IVA 19% ('+cop(CH_IVA)+') = '+cop(CH_TOT)+' · *Abono 40%:* '+cop(Math.round(CH_TOT*.4)):pl.p?'*Total estimado:* '+cop(pl.t)+' · *Abono 40%:* '+cop(Math.round(pl.t*.4)):'*Total estimado:* a cotizar · *Abono 40%:* a cotizar');
+ const X=ENT[k];L.push('');if(X)L.push('*'+X[0]+':* '+$('rsv-ent').value.trim());if(charla())L.push('*Dirección:* '+$('rsv-dir').value.trim());L.push('*Nombre:* '+$('rsv-nom').value.trim(),'*Teléfono:* '+$('rsv-tel').value.trim(),'*Correo:* '+$('rsv-mail').value.trim(),'✅ Acepto la Política de Tratamiento de Datos Personales.','','*NOTA:* La fecha escogida está sujeta a acomodación. *NOS COMUNICAREMOS PARA CONFIRMACIÓN*');return L;}
 function guardar(){if(!APPS_SCRIPT_URL)return;const pl=PLANES[$('rsv-plan').value];
- const d={fecha:iso(sel),tipoDia:esFS()?(FESTIVOS.includes(iso(sel))?'Festivo':'Fin de semana'):'Martes a viernes',plan:pl.n,adH:cnt.ad.h,adM:cnt.ad.m,niH:cnt.ni.h,niM:cnt.ni.m,beH:cnt.be.h,beM:cnt.be.m,personas:PER()+T('be'),total:pl.p?pl.t:'A cotizar',abono:pl.p?Math.round(pl.t*.4):'A cotizar',nombre:$('rsv-nom').value.trim(),telefono:$('rsv-tel').value.trim(),correo:$('rsv-mail').value.trim(),acepto:'Sí',entidad:ENT[$('rsv-plan').value]?$('rsv-ent').value.trim():''};
+ const d={fecha:iso(sel),tipoDia:esFS()?(FESTIVOS.includes(iso(sel))?'Festivo':'Fin de semana'):'Martes a viernes',plan:charla()?'Plan Estudiantil - Charla en colegio':pl.n,adH:cnt.ad.h,adM:cnt.ad.m,niH:cnt.ni.h,niM:cnt.ni.m,beH:cnt.be.h,beM:cnt.be.m,personas:PER()+T('be'),total:pl.p?pl.t:'A cotizar',abono:pl.p?Math.round(pl.t*.4):'A cotizar',nombre:$('rsv-nom').value.trim(),telefono:$('rsv-tel').value.trim(),correo:$('rsv-mail').value.trim(),acepto:'Sí',entidad:ENT[$('rsv-plan').value]?$('rsv-ent').value.trim():'',direccion:charla()?$('rsv-dir').value.trim():''};
  try{fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d),keepalive:true}).catch(()=>{});}catch(_){}}
 $('rsv-s2').onsubmit=ev=>{ev.preventDefault();let e=err();
  if(!e&&ENT[$('rsv-plan').value]&&!$('rsv-ent').value.trim())e=ENT[$('rsv-plan').value][2];
+ if(!e&&charla()&&!$('rsv-dir').value.trim())e='Escribe la dirección del colegio y el municipio.';
  if(!e&&!$('rsv-nom').value.trim())e='Escribe tu nombre.';
  if(!e&&$('rsv-tel').value.replace(/\D/g,'').length<7)e='Escribe un teléfono válido.';
  if(!e&&!/^\S+@\S+\.\S+$/.test($('rsv-mail').value))e='Escribe un correo válido.';
@@ -99,7 +107,7 @@ $('rsv-s2').onsubmit=ev=>{ev.preventDefault();let e=err();
  if(r.hidden){r.innerHTML='<b>Revisa tu solicitud:</b><br>'+L.slice(2).map(x=>{x=x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*([^*]+)\*/g,'<b>$1</b>');return x.startsWith('<b>Plan:')?'<span class="rsv-plan-sum">'+x+'</span>':x.startsWith('<b>NOTA:')?'<span class="rsv-nota">'+x+'</span>':x;}).join('<br>')+'<br><br>Si todo está bien, pulsa de nuevo «Enviar solicitud por WhatsApp».';r.hidden=false;r.scrollIntoView({block:'nearest'});return;}
  guardar();
  window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(L.join('\n')),'_blank','noopener');};
-['rsv-plan','rsv-ent','rsv-nom','rsv-tel','rsv-mail'].forEach(i=>$(i).addEventListener('input',()=>{$('rsv-res').hidden=true;}));
+['rsv-plan','rsv-mod','rsv-dir','rsv-ent','rsv-nom','rsv-tel','rsv-mail'].forEach(i=>$(i).addEventListener('input',()=>{$('rsv-res').hidden=true;}));
 tb.addEventListener('click',()=>{$('rsv-res').hidden=true;});
 cal();cargarCupos();
 })();
