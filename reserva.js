@@ -11,6 +11,8 @@ const FESTIVOS = [
 const MIN_ENTRE_SEMANA = 16; // más de 15 personas (sin contar bebés)
 const CUPO_FIN_SEMANA = 25;  // cupo máximo por día (sin contar bebés)
 const WHATSAPP = '573186506095';
+/* URL de la aplicación web de Google Apps Script que guarda cada solicitud en la hoja de Drive. Vacío = no se envía. */
+const APPS_SCRIPT_URL = '';
 (function(){
 const $=id=>document.getElementById(id);
 const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -51,7 +53,7 @@ function err(){const a=T('ad');if(a<1)return 'Debe asistir al menos 1 adulto.';i
  if(esFS()&&PER()>CUPO_FIN_SEMANA)return 'Cupo máximo '+CUPO_FIN_SEMANA+' personas por día (sin contar bebés). Para grupos más grandes elige un día de martes a viernes.';
  if(!esFS()&&PER()<MIN_ENTRE_SEMANA)return 'De martes a viernes atendemos grupos privados de más de 15 personas: lleva '+PER()+', faltan '+(MIN_ENTRE_SEMANA-PER())+' (sin contar bebés). Para grupos pequeños elige un sábado, domingo o festivo.';
  return '';}
-function tot(){$('rsv-regla').textContent=esFS()?'Fin de semana o festivo: público general. Cupo máximo '+CUPO_FIN_SEMANA+' personas por día (sin contar bebés), sujeto a disponibilidad.':'Martes a viernes: grupos privados de mínimo '+MIN_ENTRE_SEMANA+' personas (sin contar bebés).';const e=err();$('rsv-err').textContent=e;const pl=PLANES[$('rsv-plan').value];let h;
+function tot(){if($('rsv-err2'))$('rsv-err2').textContent='';$('rsv-regla').textContent=esFS()?'Fin de semana o festivo: público general. Cupo máximo '+CUPO_FIN_SEMANA+' personas por día (sin contar bebés), sujeto a disponibilidad.':'Martes a viernes: grupos privados de mínimo '+MIN_ENTRE_SEMANA+' personas (sin contar bebés).';const e=err();$('rsv-err').textContent=e;const pl=PLANES[$('rsv-plan').value];let h;
  if(pl.p){let t=0;TIPOS.forEach(([k])=>t+=T(k)*pl.p[k]);h='Total estimado: <b>'+cop(t)+'</b><br>Abono para confirmar (40%): <b>'+cop(Math.round(t*.4))+'</b><br><small>Adultos $55.000 · Niños $50.000 · Bebés gratis</small>';pl.t=t;}
  else h='Precio: <b>a cotizar</b>. Te enviaremos la cotización por WhatsApp; el abono es del 40%.';
  $('rsv-tot').innerHTML=h;}
@@ -59,14 +61,18 @@ function resumen(){const pl=PLANES[$('rsv-plan').value];const L=['Hola, quiero r
  TIPOS.forEach(([k,n,e])=>{if(T(k))L.push('- '+n+' ('+e+'): '+T(k)+' (H '+cnt[k].h+' / M '+cnt[k].m+')');});
  L.push(pl.p?'Total estimado: '+cop(pl.t)+' · Abono 40%: '+cop(Math.round(pl.t*.4)):'Precio: a cotizar');
  L.push('Nombre: '+$('rsv-nom').value.trim(),'Teléfono: '+$('rsv-tel').value.trim(),'Correo: '+$('rsv-mail').value.trim(),'Acepto la Política de Tratamiento de Datos Personales.');return L;}
+function guardar(){if(!APPS_SCRIPT_URL)return;const pl=PLANES[$('rsv-plan').value];
+ const d={fecha:iso(sel),tipoDia:esFS()?(FESTIVOS.includes(iso(sel))?'Festivo':'Fin de semana'):'Martes a viernes',plan:pl.n,adH:cnt.ad.h,adM:cnt.ad.m,niH:cnt.ni.h,niM:cnt.ni.m,beH:cnt.be.h,beM:cnt.be.m,personas:PER()+T('be'),total:pl.p?pl.t:'A cotizar',abono:pl.p?Math.round(pl.t*.4):'A cotizar',nombre:$('rsv-nom').value.trim(),telefono:$('rsv-tel').value.trim(),correo:$('rsv-mail').value.trim(),acepto:'Sí'};
+ try{fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d),keepalive:true}).catch(()=>{});}catch(_){}}
 $('rsv-s2').onsubmit=ev=>{ev.preventDefault();let e=err();
  if(!e&&!$('rsv-nom').value.trim())e='Escribe tu nombre.';
  if(!e&&$('rsv-tel').value.replace(/\D/g,'').length<7)e='Escribe un teléfono válido.';
  if(!e&&!/^\S+@\S+\.\S+$/.test($('rsv-mail').value))e='Escribe un correo válido.';
  if(!e&&!$('rsv-acepto').checked)e='Debes aceptar la Política de Tratamiento de Datos Personales.';
- $('rsv-err').textContent=e;if(e)return;
+ $('rsv-err').textContent=e;const e2=$('rsv-err2');e2.textContent=e;if(e){e2.scrollIntoView({behavior:'smooth',block:'center'});return;}
  const L=resumen(),r=$('rsv-res');
  if(r.hidden){r.innerHTML='<b>Revisa tu solicitud:</b><br>'+L.slice(1).map(x=>x.replace(/</g,'&lt;')).join('<br>')+'<br><br>Si todo está bien, pulsa de nuevo «Enviar solicitud por WhatsApp».';r.hidden=false;r.scrollIntoView({block:'nearest'});return;}
+ guardar();
  window.open('https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(L.join('\n')),'_blank','noopener');};
 ['rsv-plan','rsv-nom','rsv-tel','rsv-mail'].forEach(i=>$(i).addEventListener('input',()=>{$('rsv-res').hidden=true;}));
 tb.addEventListener('click',()=>{$('rsv-res').hidden=true;});
