@@ -160,3 +160,8 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .product-categories .category-button{margin:0;font-size:1rem;color:var(--g)}
 .product-categories .category-button img{width:160px;height:160px;max-width:100%;border-radius:50%;object-fit:cover;flex-shrink:0}
 @media(max-width:480px){.product-categories .category-button img{width:130px;height:130px}.product-categories .category-button{font-size:.95rem}}
+
+.christmas-category{position:relative}
+.product-categories .christmas-category img{border-color:#b72b30;box-shadow:0 0 0 3px #d9b25b,0 5px 16px #0002}
+.christmas-tag{display:inline-block;color:#fff;background:#9e2028;border-radius:20px;padding:.18rem .7rem;font-size:.8rem;font-weight:700}
+.christmas-note{color:#9e2028;border-left:4px solid #cba24d;padding:.5rem 1rem;background:#fff6dc;border-radius:4px}
