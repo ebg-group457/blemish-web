@@ -172,3 +172,10 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .sec[id]{scroll-margin-top:88px}
 @media(max-width:1000px){.hdr .burger{display:block}.hdr>nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--g);flex-direction:column;padding:1rem 5vw}.hdr #nav-t:checked~nav{display:flex}.hdr>nav a{margin:.6rem 0}}
 @media(max-width:480px){.hdr .logo{gap:.45rem;font-size:1.5rem}.hdr .logo-img{width:42px;height:42px}.hdr .logo-instagram{width:48px;height:48px}}
+
+/* Letrero dorado ampliado, entre los dos logos */
+.hdr .logo{gap:.75rem}
+.hdr .logo-wordmark{width:clamp(220px,28vw,380px);height:auto;max-height:80px;object-fit:contain;flex-shrink:1}
+.hdr .logo-img{width:56px;height:56px;flex-shrink:0}
+@media(max-width:1150px){.hdr .burger{display:block}.hdr>nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--g);flex-direction:column;padding:1rem 5vw}.hdr #nav-t:checked~nav{display:flex}.hdr>nav a{margin:.6rem 0}}
+@media(max-width:480px){.hdr .logo{gap:.4rem}.hdr .logo-img{width:42px;height:42px}.hdr .logo-instagram{width:48px;height:48px}.hdr .logo-wordmark{width:clamp(132px,42vw,200px);max-height:54px}}
