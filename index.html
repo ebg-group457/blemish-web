@@ -69,7 +69,7 @@ function show(){li.src=set[k].href;lc.textContent=set[k].dataset.caption||''}
 document.querySelectorAll('[data-gallery]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();set=[...document.querySelectorAll('[data-gallery="'+a.dataset.gallery+'"]')];k=set.indexOf(a);show();lb.hidden=false}));
 lb.querySelector('.lb-x').onclick=()=>lb.hidden=true;lb.querySelector('.lb-p').onclick=()=>{k=(k-1+set.length)%set.length;show()};lb.querySelector('.lb-n').onclick=()=>{k=(k+1)%set.length;show()};
 lb.onclick=e=>{if(e.target===lb)lb.hidden=true};document.onkeydown=e=>{if(lb.hidden)return;if(e.key=='Escape')lb.hidden=true;if(e.key=='ArrowRight')lb.querySelector('.lb-n').click();if(e.key=='ArrowLeft')lb.querySelector('.lb-p').click()};
-document.querySelectorAll('nav a').forEach(a=>a.onclick=()=>document.getElementById('nav-t').checked=false);
+document.querySelectorAll('.hdr nav a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('nav-t').checked=false;}));
 </script><script>/* Contador de visitas: cada mes actualizar data-n, los textos y la fecha de corte */
 (function(){var e=document.getElementById('visitas');if(!e)return;var n=+e.dataset.n,fin=e.textContent,f=new Intl.NumberFormat('es-CO');
 function run(){var t0=null;function st(t){t0=t0||t;var p=Math.min((t-t0)/1800,1);e.textContent='+'+f.format(Math.round(n*(1-Math.pow(1-p,3))));p<1?requestAnimationFrame(st):e.textContent=fin}requestAnimationFrame(st)}
