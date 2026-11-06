@@ -165,3 +165,10 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .product-categories .christmas-category img{border-color:#b72b30;box-shadow:0 0 0 3px #d9b25b,0 5px 16px #0002}
 .christmas-tag{display:inline-block;color:#fff;background:#9e2028;border-radius:20px;padding:.18rem .7rem;font-size:.8rem;font-weight:700}
 .christmas-note{color:#9e2028;border-left:4px solid #cba24d;padding:.5rem 1rem;background:#fff6dc;border-radius:4px}
+
+/* Logo complementario de la marca y navegación adaptable */
+.hdr .logo-instagram{width:56px;height:56px;object-fit:contain;border-radius:50%;flex-shrink:0}
+.hdr .logo{flex-shrink:0}
+.sec[id]{scroll-margin-top:88px}
+@media(max-width:1000px){.hdr .burger{display:block}.hdr>nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--g);flex-direction:column;padding:1rem 5vw}.hdr #nav-t:checked~nav{display:flex}.hdr>nav a{margin:.6rem 0}}
+@media(max-width:480px){.hdr .logo{gap:.45rem;font-size:1.5rem}.hdr .logo-img{width:42px;height:42px}.hdr .logo-instagram{width:48px;height:48px}}
