@@ -182,7 +182,7 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 
 /* Banner superior: productos, kits y promociones */
 :root{--logo:#EFB232}
-.topbar{background:var(--g);color:var(--logo);padding:calc(var(--hdr-h,88px) + .35rem) 5vw .8rem;border-bottom:1px solid rgba(239,178,50,.35)}
+.topbar{background:var(--g);color:var(--logo);padding:.35rem 5vw .8rem;border-bottom:1px solid rgba(239,178,50,.35)}
 .tb-wrap{display:flex;gap:1rem;align-items:stretch;max-width:1400px;margin:0 auto}
 .tb-products{flex:1 1 auto;min-width:0}
 .tb-k{margin:0 0 .35rem;font-family:Nunito,sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--logo)}
@@ -202,10 +202,15 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .tb-card{flex:0 0 auto;align-self:flex-end;min-height:84px}
 .tb-kits{background:rgba(239,178,50,.1);border:1.5px solid var(--logo)}
 .promo-slot{border:1.5px dashed rgba(239,178,50,.6);padding-left:.9rem}
-.topbar+.hero{min-height:calc(100vh - 150px);padding-top:3rem}
+.site-top+.hero{min-height:calc(100vh - 240px);padding-top:2.5rem}
+/* Home: menú + banner fijos al hacer scroll */
+.site-top{position:sticky;top:0;z-index:50;background:var(--g)}
+.site-top .hdr{position:relative;z-index:2}
+.site-top .topbar{position:relative;z-index:1}
+body:has(.site-top) .sec[id],body:has(.site-top) #reservar{scroll-margin-top:225px}
 @media(prefers-reduced-motion:reduce){.tb-list{animation:none}.tb-track{overflow-x:auto;-webkit-mask-image:none;mask-image:none}.tb-item[aria-hidden]{display:none}}
 @media(max-width:760px){
-.topbar{padding:calc(var(--hdr-h,80px) + .3rem) 0 .7rem}
+.topbar{padding:.3rem 0 .7rem}
 .tb-wrap{gap:.6rem;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x proximity;scroll-padding-inline:4vw;padding:0 4vw .2rem;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .tb-wrap::-webkit-scrollbar{display:none}
 .tb-products{flex:0 0 auto}
@@ -214,5 +219,6 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .tb-item,.tb-card{scroll-snap-align:start}
 .tb-item img,.tb-card img{width:54px;height:54px}
 .tb-card{min-height:72px}
-.topbar+.hero{min-height:auto;padding-top:3rem}
+.site-top+.hero{min-height:auto;padding-top:2.5rem}
+body:has(.site-top) .sec[id],body:has(.site-top) #reservar{scroll-margin-top:200px}
 }
