@@ -179,3 +179,40 @@ p,li,blockquote{hyphens:auto;-webkit-hyphens:auto}
 .hdr .logo-img{width:56px;height:56px;flex-shrink:0}
 @media(max-width:1150px){.hdr .burger{display:block}.hdr>nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--g);flex-direction:column;padding:1rem 5vw}.hdr #nav-t:checked~nav{display:flex}.hdr>nav a{margin:.6rem 0}}
 @media(max-width:480px){.hdr .logo{gap:.4rem}.hdr .logo-img{width:42px;height:42px}.hdr .logo-instagram{width:48px;height:48px}.hdr .logo-wordmark{width:clamp(132px,42vw,200px);max-height:54px}}
+
+/* Banner superior: productos, kits y promociones */
+:root{--logo:#EFB232}
+.topbar{background:var(--g);color:var(--logo);padding:calc(var(--hdr-h,88px) + .35rem) 5vw .8rem;border-bottom:1px solid rgba(239,178,50,.35)}
+.tb-wrap{display:flex;gap:1rem;align-items:stretch;max-width:1400px;margin:0 auto}
+.tb-products{flex:1 1 auto;min-width:0}
+.tb-k{margin:0 0 .35rem;font-family:Nunito,sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--logo)}
+.tb-track{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent);mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent)}
+.tb-list{display:flex;gap:.6rem;list-style:none;margin:0;padding:0;width:max-content;animation:tb-scroll 45s linear infinite}
+.tb-track:hover .tb-list,.tb-track:focus-within .tb-list{animation-play-state:paused}
+@keyframes tb-scroll{to{transform:translateX(calc(-50% - .3rem))}}
+.tb-item a,.tb-card{display:flex;align-items:center;gap:.6rem;padding:.45rem .8rem .45rem .45rem;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(239,178,50,.22);color:var(--logo);text-decoration:none;transition:background .2s,border-color .2s}
+.tb-item a:hover,.tb-item a:focus-visible,a.tb-card:hover,a.tb-card:focus-visible{background:rgba(239,178,50,.12);border-color:var(--logo);outline:none}
+.tb-item img,.tb-card img{width:64px;height:64px;object-fit:cover;border-radius:50%;border:2px solid var(--logo);background:#fff;flex-shrink:0}
+.tb-txt{display:flex;flex-direction:column;line-height:1.15;white-space:nowrap}
+.tb-name{font-family:"Yeseva One",serif;font-size:.98rem;color:var(--logo)}
+.tb-price{font-family:"Yeseva One",serif;font-size:1.12rem;color:var(--logo)}
+.tb-w,.tb-cta{font-family:Nunito,sans-serif;font-size:.74rem;font-weight:600;color:var(--logo);opacity:.85}
+.tb-cta{opacity:1;font-weight:700;margin-top:.15rem}
+.tb-tag{align-self:flex-start;font-family:Nunito,sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g);background:var(--logo);border-radius:999px;padding:.08rem .5rem;margin-bottom:.2rem}
+.tb-card{flex:0 0 auto;align-self:flex-end;min-height:84px}
+.tb-kits{background:rgba(239,178,50,.1);border:1.5px solid var(--logo)}
+.promo-slot{border:1.5px dashed rgba(239,178,50,.6);padding-left:.9rem}
+.topbar+.hero{min-height:calc(100vh - 150px);padding-top:3rem}
+@media(prefers-reduced-motion:reduce){.tb-list{animation:none}.tb-track{overflow-x:auto;-webkit-mask-image:none;mask-image:none}.tb-item[aria-hidden]{display:none}}
+@media(max-width:760px){
+.topbar{padding:calc(var(--hdr-h,80px) + .3rem) 0 .7rem}
+.tb-wrap{gap:.6rem;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x proximity;scroll-padding-inline:4vw;padding:0 4vw .2rem;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tb-wrap::-webkit-scrollbar{display:none}
+.tb-products{flex:0 0 auto}
+.tb-track{overflow:visible;-webkit-mask-image:none;mask-image:none}
+.tb-list{animation:none}.tb-item[aria-hidden]{display:none}
+.tb-item,.tb-card{scroll-snap-align:start}
+.tb-item img,.tb-card img{width:54px;height:54px}
+.tb-card{min-height:72px}
+.topbar+.hero{min-height:auto;padding-top:3rem}
+}
