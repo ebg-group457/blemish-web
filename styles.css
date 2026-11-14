@@ -222,3 +222,9 @@ body:has(.site-top) .sec[id],body:has(.site-top) #reservar{scroll-margin-top:225
 .site-top+.hero{min-height:auto;padding-top:2.5rem}
 body:has(.site-top) .sec[id],body:has(.site-top) #reservar{scroll-margin-top:200px}
 }
+
+/* Promoción activa: borde rojo parpadeante */
+.tb-promo{background:rgba(200,16,46,.12);border:2px solid #ff2a2a;animation:tbBlink 1s steps(1,end) infinite}
+.tb-promo img{border-color:#ff2a2a}
+.tb-tag-red{background:#ff2a2a;color:#fff}
+@keyframes tbBlink{0%{border-color:#ff2a2a;box-shadow:0 0 12px 2px rgba(255,42,42,.85)}50%{border-color:rgba(255,42,42,.15);box-shadow:none}}
