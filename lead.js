@@ -12,6 +12,8 @@ var css='.ld-bg{position:fixed;inset:0;background:rgba(1,48,37,.72);z-index:9999
 '.ld-x{position:absolute;top:.5rem;right:.7rem;background:none;border:0;font-size:1.6rem;color:#013025;cursor:pointer;line-height:1}.ld-opt{font-weight:400;color:#8a7a55}';
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function interes(a){var h=document.querySelector('h1');var t=a.textContent.trim();return (h?h.textContent.trim():document.title)+(t?' · '+t:'')}
+function tipoQ(){var p=location.pathname;if(/kit/i.test(p))return 'kit';if(/\/productos\//.test(p))return 'prod';return ''}
+function qty(a){var t=tipoQ();if(!t)return '';return '<label for="ld-q">'+(t==='kit'?'¿Cuántos kits regalo te interesan?':'Cantidad de unidades <span class="ld-opt">(opcional)</span>')+'</label><input id="ld-q" type="number" inputmode="numeric" min="1" max="100000" step="1"'+(t==='kit'?' required':'')+' style="width:100%;box-sizing:border-box;padding:.6rem .7rem;border:1px solid #d9c690;border-radius:10px;font:inherit;background:#fff">'}
 function guardado(){try{return JSON.parse(localStorage.getItem('fb_lead')||'{}')}catch(_){return{}}}
 function abrir(a){
  if(!document.getElementById('ld-css')){var st=document.createElement('style');st.id='ld-css';st.textContent=css;document.head.appendChild(st)}
@@ -21,23 +23,38 @@ function abrir(a){
  '<label for="ld-e">Empresa <span class="ld-opt">(si aplica)</span></label><input id="ld-e" type="text" autocomplete="organization" maxlength="120" value="'+esc(g.empresa||'')+'">'+
  '<label for="ld-t">Teléfono (WhatsApp)</label><input id="ld-t" type="tel" autocomplete="tel" inputmode="tel" required maxlength="20" value="'+esc(g.telefono||'')+'">'+
  '<label for="ld-c">Correo electrónico</label><input id="ld-c" type="email" autocomplete="email" required maxlength="120" value="'+esc(g.correo||'')+'">'+
- '<label class="ld-ok"><input id="ld-a" type="checkbox" required> <span>Acepto la <a href="'+base+'politica-de-datos.html" target="_blank" rel="noopener">Política de Tratamiento de Datos</a> de Finca Blemish.</span></label>'+
+ qty(a)+'<label class="ld-ok"><input id="ld-a" type="checkbox" required> <span>Acepto la <a href="'+base+'politica-de-datos.html" target="_blank" rel="noopener">Política de Tratamiento de Datos</a> de Finca Blemish.</span></label>'+
  '<p class="ld-err" role="alert"></p><button class="ld-go" type="submit">Continuar a WhatsApp</button></form>';
  document.body.appendChild(bg);var f=bg.querySelector('form'),err=f.querySelector('.ld-err');
  function cerrar(){bg.remove();document.removeEventListener('keydown',k)}function k(e){if(e.key==='Escape')cerrar()}
  document.addEventListener('keydown',k);bg.addEventListener('click',function(e){if(e.target===bg)cerrar()});f.querySelector('.ld-x').onclick=cerrar;
  setTimeout(function(){f.querySelector('#ld-n').focus()},30);
  f.onsubmit=function(e){e.preventDefault();
-  var d={tipo:'interesado',nombre:f.querySelector('#ld-n').value.trim(),empresa:f.querySelector('#ld-e').value.trim(),telefono:f.querySelector('#ld-t').value.trim(),correo:f.querySelector('#ld-c').value.trim(),acepto:f.querySelector('#ld-a').checked?'Sí':'',interes:interes(a),pagina:location.href};
+  var d={tipo:'interesado',nombre:f.querySelector('#ld-n').value.trim(),empresa:f.querySelector('#ld-e').value.trim(),telefono:f.querySelector('#ld-t').value.trim(),correo:f.querySelector('#ld-c').value.trim(),acepto:f.querySelector('#ld-a').checked?'Sí':'',interes:interes(a),pagina:location.href,cantidad:(f.querySelector('#ld-q')?f.querySelector('#ld-q').value.trim():'')};
   if(d.nombre.length<2){err.textContent='Escribe tu nombre.';return}
   if(d.telefono.replace(/\D/g,'').length<7){err.textContent='Escribe un número de WhatsApp válido.';return}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.correo)){err.textContent='Escribe un correo válido.';return}
+  var tq=tipoQ();if(tq==='kit'&&!(parseInt(d.cantidad,10)>=1)){err.textContent='Indica cuántos kits regalo te interesan.';return}
+  if(d.cantidad&&!(parseInt(d.cantidad,10)>=1)){err.textContent='La cantidad debe ser un número mayor que cero.';return}
   if(!d.acepto){err.textContent='Debes aceptar la Política de Tratamiento de Datos.';return}
   try{localStorage.setItem('fb_lead',JSON.stringify({nombre:d.nombre,empresa:d.empresa,telefono:d.telefono,correo:d.correo}))}catch(_){}
-  if(LEADS_URL){try{fetch(LEADS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d),keepalive:true}).catch(function(){})}catch(_){}}
-  var u=a.href,txt='\n\nSoy '+d.nombre+(d.empresa?' ('+d.empresa+')':'')+'.';
-  u+= (u.indexOf('text=')>-1)?encodeURIComponent(txt):(u.indexOf('?')>-1?'&':'?')+'text='+encodeURIComponent('Hola, quiero información de Finca Blemish.'+txt);
-  window.open(u,'_blank','noopener');cerrar();
+  var btn=f.querySelector('.ld-go');btn.disabled=true;btn.textContent='Generando tu solicitud…';
+  var w=null;try{w=window.open('about:blank','_blank')}catch(_){}
+  function ir(num){
+   var tq=tipoQ(),saludo=decodeURIComponent(((a.href.split('text=')[1]||'').split('&')[0]).replace(/\+/g,' '))||'Hola, quiero información de Finca Blemish.';
+   var L=[saludo,'','*Solicitud N.º '+num+'*','Nombre: '+d.nombre];
+   if(d.empresa)L.push('Empresa: '+d.empresa);
+   L.push('WhatsApp: '+d.telefono,'Correo: '+d.correo);
+   if(d.cantidad)L.push((tq==='kit'?'Cantidad de kits: ':'Cantidad: ')+d.cantidad);
+   L.push('Acepta política de datos: Sí');
+   var u=a.href.split('?')[0]+'?text='+encodeURIComponent(L.join('\n'));
+   if(w&&!w.closed){try{w.opener=null}catch(_){}w.location.href=u}else{location.href=u}
+   cerrar();
+  }
+  var hecho=false;function fin(n){if(hecho)return;hecho=true;ir(n)}
+  var resp=function(){var t=new Date(),z=function(x){return ('0'+x).slice(-2)};return 'WEB-'+String(t.getFullYear()).slice(2)+z(t.getMonth()+1)+z(t.getDate())+z(t.getHours())+z(t.getMinutes())+z(t.getSeconds())};
+  setTimeout(function(){fin(resp())},6000);
+  try{fetch(LEADS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).then(function(r){return r.text()}).then(function(t){var m=/"solicitud"\s*:\s*"([^"]+)"/.exec(t);fin(m?m[1]:resp())}).catch(function(){fin(resp())})}catch(_){fin(resp())}
  };
 }
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href*="wa.me/"]');if(!a||e.ctrlKey||e.metaKey)return;e.preventDefault();abrir(a)},true);

@@ -89,4 +89,4 @@ b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();v.
 if(window.matchMedia('(hover: hover)').matches){a.addEventListener('mouseenter',p);a.addEventListener('mouseleave',function(){v.pause();});}
 else{b.hidden=false;v.muted=true;ui();if('IntersectionObserver' in window){new IntersectionObserver(function(e){e[0].isIntersecting?v.play().catch(function(){}):v.pause();},{threshold:.5}).observe(v);}}})();</script>
 <script>document.querySelectorAll("[data-category]").forEach(function(button){button.addEventListener("click",function(){var notice=document.getElementById("category-notice");notice.textContent=button.dataset.category+": catálogo en preparación. Pronto encontrarás aquí nuestros productos.";notice.hidden=false;});});</script>
-<script src="lead.js?v=1" defer></script></body></html>
+<script src="lead.js?v=2" defer></script></body></html>
