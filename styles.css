@@ -228,3 +228,6 @@ body:has(.site-top) .sec[id],body:has(.site-top) #reservar{scroll-margin-top:200
 .tb-promo img{border-color:#ff2a2a}
 .tb-tag-red{background:#ff2a2a;color:#fff}
 @keyframes tbBlink{0%{border-color:#ff2a2a;box-shadow:0 0 12px 2px rgba(255,42,42,.85)}50%{border-color:rgba(255,42,42,.15);box-shadow:none}}
+/* Banner superior fijo en todas las páginas (topbar.js) */
+body.has-top main{padding-top:2rem!important}
+body.has-top .sec[id]{scroll-margin-top:225px}
