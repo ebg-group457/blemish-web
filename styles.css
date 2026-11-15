@@ -231,3 +231,8 @@ body:has(.site-top) .sec[id],body:has(.site-top) #reservar{scroll-margin-top:200
 /* Banner superior fijo en todas las páginas (topbar.js) */
 body.has-top main{padding-top:2rem!important}
 body.has-top .sec[id]{scroll-margin-top:225px}
+
+/* SEO y auditoría 2026-11-14 */
+.category-button[hidden]{display:none!important}
+.pf-iva{margin-top:.2rem}
+.nf{padding-top:9rem;text-align:center;min-height:60vh}.nf h1{font-family:"Yeseva One",serif}.nf p{text-align:center}
